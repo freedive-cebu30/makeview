@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link href='../../../../css/zoombox.css' rel='stylesheet' type='text/css' />
+    <script type="text/javascript" src="../../../../js/jquery-1.3.2.min.js"></script>
+    <script type="text/javascript" src="../../../../js/jquery-ui-1.7.2.custom.min.js"></script>
+    <script type="text/javascript" src="../../../../js/zoombox.js"></script>
+    <script type="text/javascript">
+        $(function() {
+          {% for data in datas %}
+            $('#{{data.key.id}}').draggable({
+                cursor: 'move',
+                helper: 'clone',
+                opacity: 0.8,
+                revert: true
+            });
+          {% endfor %}
+        });
+        $(function(){
+            $('#{{albumid}}').droppable({
+                drop: function(event, ui){
+                    var pictureid = ui.draggable.context.id;
+                    var albumid   = {{albumid}};
+                    var data = 'data='+pictureid+":"+albumid
+                    var url = '/admin/album/deletealbum';
+                    if(pictureid !='' && albumid !=''){
+                        $.post(url, data, function(status){
+                            var bool = status.substring(0,1);
+                            if(bool == '1'){
+
+                                jQuery('#{{albumid}}').get(0).style.backgroundColor='red';
+                                setTimeout("changeCss({{albumid}})",1000);
+
+                            }else{
+
+                                alert('削除に失敗しました。やり直して下さい！？');
+                            }
+
+                        })
+
+                    }
+                }
+
+            })
+        });
+
+        function changeCss(key){
+            var id = document.getElementById(key);
+            id.style.backgroundColor='';
+            window.location.reload();
+        }
+
+    </script>
+  <script type="text/javascript">
+    $(function() {
+      zoombox.init();
+    });
+  </script>
+  <script type="text/javascript">
+      function sendFlg(){
+        var changeForm = document.getElementById("change");
+        changeForm.action = "/admin/album/allpicture";
+        changeForm.submit();
+    }
+  </script>
+</head>
+<body>
+    <h1>アルバムに含まれる画像一覧ページです</h1>
+    <form method="GET" action="" id="change" >
+    <table>
+        <tr>
+            <td>
+                <a href="/admin/album/list">一覧に戻る</a>
+            <td>
+            <td>
+                <input type="checkbox" name="zoomFlg" value ="zo" {% ifequal zoomFlg "zo" %}checked="checked"{% endifequal %} onClick="javascript:sendFlg();" />拡大モード
+                <input type="hidden" name="albumid" value="{{albumid}}" />
+            </td>
+        <tr>
+    </table>
+    </form>
+    <form method="POST" action="update">
+    <table>
+        {% for data in datas %}
+            {% if forloop.counter0|divisibleby:"5" %}
+                <tr>
+            {% endif %}
+                <td>
+                    {% ifequal zoomFlg "zo" %}
+                        <a href="/admin/picture/img/big?pictureid={{data.key.id}}" rel="zoombox[gallery]" >
+                            <img src="/admin/picture/img/small?pictureid={{data.key.id}}" />
+                        </a>
+                    {% else %}
+                        <div id="{{data.key.id}}" class="">
+                            <img src="/admin/picture/img/small?pictureid={{data.key.id}}" />
+                        </div>
+                    {% endifequal %}
+                </td>
+            {% if forloop.last %}
+                    </tr>
+            {% else %}
+                {% if forloop.counter|divisibleby:"5" %}
+                    </tr>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        <tr>
+            <td>
+                {% for i in picturepages %}
+                    {% ifequal i picturepage %}
+                        {{ i }}
+                    {% else %}
+                        <a href="/admin/user/showalbum?picturepage={{ i }}&userid={{userid.key.id}}">{{ i }}</a>
+                    {% endifequal %}
+                {% endfor %}
+            </td>
+        </tr>
+    </table>
+    <p>削除したい画像をアルバムにドロップして下さい</p>
+    <table>
+        <tr>
+            <td>
+                <div id="{{albumid}}" style="border-style:groove; height:120px; width:120px"></div>
+            </td>
+        </tr>
+    </table>
+    </form>
+</body>
+</html>

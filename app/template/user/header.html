@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>メイクビュー｜googlemap連動写真共有サービス｜</title>
+<meta name="keywords" content="写真共有,画像,動画,googlemap,google app engine,{{meta_tag}}" />
+<meta name="description" content="メイクビューはgoogle app engineを利用してgooglemapに連動することで、地域や詳細な場所を特定した写真がアップできるサービスです。
+ストリートビューでは見つけられない場所の写真もあるかも？" />
+<meta name="robots" content="all" />
+<meta name="revisit_after" content="30 days" />
+<meta http-equiv="Content-Script-type" content="text/javascript" />
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+<link href="../../../css/common.css" rel="stylesheet" type="text/css" />
+<!-- IE 6 "fixes" -->
+<!--[if lt IE 7]>
+<link type='text/css' href='css/basic_ie.css' rel='stylesheet' media='screen' />
+<![endif]-->
+<link href='../../../css/basic.css' rel='stylesheet' type='text/css' media='screen' />
+<link href='../../../css/confirm.css' rel='stylesheet' type='text/css' media='screen' />
+<link href="../../../css/skin/selectable/style.css" type="text/css" rel="stylesheet"  />
+<link href="../../../css/thickbox.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="../../../js/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="../../../js/jQselectable.js"></script>
+<script type="text/javascript" src="../../../js/thickbox.js"></script>
+<script type="text/javascript">
+    jQuery(function($){
+
+        var selectableStation = $(".station").jQselectable({
+            set: "fadeIn",
+            setDuration: "fast",
+            opacity: .9
+        });
+
+        var selectableLine = $(".line").jQselectable({
+            set: "fadeIn",
+            setDuration: "fast",
+            opacity: .9,
+            callback: function(){
+                var line = document.getElementById("line");
+                var data = 'line='+line.value;
+                var url = '/index/searchstation';
+
+                $.post(url, data, function(status){
+                    var json = eval(status);
+                    var station = document.getElementById('station');
+                    station.length = 0;
+                    var cnt = json.length;
+
+                    for(var i = 0; i < cnt; i++){
+                          station.options[0] = new Option("駅名", "");
+                          station.options[0].selected="selected";
+                          station.options[0].className="br";
+                          station.options[i+1] = new Option(json[i], json[i]);
+                          if(i%4 == 0){
+                                  station.options[i].className="br";
+                          }
+                    }
+
+                    selectableStation.rebuild();
+                })
+
+            }
+        });
+
+        $(".prefecture").jQselectable({
+            set: "fadeIn",
+            setDuration: "fast",
+            opacity: .9,
+            callback:function(){
+
+                var prefecture = document.getElementById("prefecture");
+                var data = 'prefecture='+prefecture.value;
+                var url = '/index/searchline';
+
+                $.post(url, data, function(status){
+
+                    var json = eval(status);
+                    var line = document.getElementById('line');
+
+                    line.length = 0;
+                    var cnt = json.length;
+                    for(var i = 0; i < cnt; i++){
+
+                          line.options[0] = new Option("路線名", "");
+                          line.options[0].selected="selected";
+                          line.options[0].className="br";
+                          line.options[i+1] = new Option(json[i], json[i]);
+                          if(i%4 == 0){
+                              line.options[i].className="br";
+                          }
+
+                    }
+                    selectableLine.rebuild();
+                })
+            }
+        });
+
+    });
+</script>

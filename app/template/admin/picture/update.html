@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+	<h1>管理の編集ページです</h1>
+	<table>
+		<form method="POST" action="updateend">
+			<tr>
+				<td>名前</td>
+				<td><input type="text" name="name" value="{{datas.name|escape}}"></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td><img src="/admin/picture/img/middle?pictureid={{datas.key.id}}" /></td>
+			</tr>
+			<tr>
+				<td>備考</td>
+				<td><input type="text" name="recital" value="{{datas.recital|escape}}"></td>
+			</tr>
+			<tr>
+				<td>
+				<input type="submit" value="編集" />
+				</td>
+			</tr>
+			<input type="hidden" name="pictureid" value="{{datas.key.id}}" />
+		</form>
+	</table>
+	<a href="/admin/picture/list">一覧に戻る</a>
+
+</body>

@@ -1,0 +1,177 @@
+{% include "../headerlow.html" %}
+<style type="text/css">
+    .tooltip {font-family:Verdana, Arial, Helvetica, sans-serif;
+    /*font-size:11px;*/ }
+    a:hover {background:#ffffff; text-decoration:none;} /*BG color is a must for IE6*/
+    a.tooltip span {display:none; padding:2px 3px; margin-left:8px; width:130px;}
+    a.tooltip:hover span{display:inline; position:absolute; border:1px solid #cccccc; background:#ffffff; color:#6c6c6c;}
+</style>
+<script type="text/javascript">
+  function sendFlg(){
+    var changeForm = document.getElementById("change");
+    var clear = document.getElementById("clear");
+    var searchlAbumTitle = document.getElementById("searchlAbumTitle");
+    clear.value="1";
+    searchlAbumTitle.value="";
+    changeForm.submit();
+}
+</script>
+</head>
+
+<body id="bodymain">
+<div id="container"><!--container-->
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<!-- headerdetail -->
+{% include "../headerdetail.html" %}
+<!-- /headerdetail -->
+<!-- main_wrap -->
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<div id="main_wrap" class="clearfix"><!--main-->
+
+<!-- main -->
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<div id="login_main">
+
+<h2 id="h2_title">アルバム一覧</h2>
+<h3>画像をクリックするとスライドショーを見ることができます。</h3>
+<div id="login_header" class="clearfix">
+<div id="div_new">
+作成したアルバムが見られない場合はスライドショー作成画面で<br />画像を登録した後で、もう一度ご覧になって下さい。
+</div>
+    <!--div id="div_new">
+        <ul class="ul_navi">
+            <li>
+                <a href="/album/list">アルバム一覧</a>
+            </li>
+            <li>
+                <a href="/album/insert">新規アルバム登録</a>
+            </li>
+            <li>
+                <a href="/user/album/makeslideshow">スライドショー作成</a>
+            </li>
+        </ul>
+    </div-->
+
+    <div id="login_serch">
+        <form method="GET" action="/user/album/list" id="change">
+            <input type="text" name="searchlAbumTitle" id="searchlAbumTitle" value="{{searchlAbumTitle}}" />
+            <input type="submit" value="検索" />
+            <input type="button" value="クリア" onClick="sendFlg()"/>
+            <input type="hidden" name="clear" id="clear" value="" />
+        </form>
+    </div>
+
+<br class="clearboth" />
+</div>
+
+<div id="list_alubm">
+<ul>
+{% for album in datas %}
+    <li>
+        <h2>{{album.title|escape}}</h2>
+        <a href="/slideshow?albumid={{album.key.id}}" title="{{album.title|escape}}" class="tooltip">
+            <img src="/picture/img/small?pictureid={{album.pictureid}}"  />
+            <span>{{album.title}}</span>
+        </a>
+        <p><a href="/user/album/detail?albumid={{album.key.id}}">アルバム情報変更</a></p>
+    </li>
+{% endfor %}
+</ul>
+<br class="clearboth" />
+</div>
+{% ifequal pagerFlg 1 %}
+    <ul class="pager" style="margin-left:250px;">
+        {% ifnotequal page 1 %}
+            <li class="prev">
+                <a href="/user/album/list?page={{ prev }}">&laquo; 前へ</a>
+            </li>
+        {% endifnotequal %}
+            {% for i in pages %}
+                {% ifequal forloop.counter 1 %}
+                    {% ifequal i page %}
+                        <li>
+                            {{ i }}
+                        </li>
+                    {% else %}
+                        <li>
+                            <a href="/user/album/list?page={{ i }}">{{ i }}</a>
+                        </li>
+                    {% endifequal %}
+                {% endifequal %}
+                {% ifequal forloop.counter 2 %}
+                    {% ifequal i page %}
+                        <li>
+                            {{ i }}
+                        </li>
+                    {% else %}
+                        <li>
+                            <a href="/user/album/list?page={{ i }}">{{ i }}</a>
+                        </li>
+                    {% endifequal %}
+                {% endifequal %}
+                {% ifequal forloop.counter 3 %}
+                    {% ifequal i page %}
+                        <li>
+                            {{ i }}
+                        </li>
+                    {% else %}
+                        <li>
+                            <a href="/user/album/list?page={{ i }}">{{ i }}</a>
+                        </li>
+                    {% endifequal %}
+                {% endifequal %}
+                {% ifequal forloop.counter 4 %}
+                    {% ifequal i page %}
+                        <li>
+                            {{ i }}
+                        </li>
+                    {% else %}
+                        <li>
+                            <a href="/user/album/list?page={{ i }}">{{ i }}</a>
+                        </li>
+                    {% endifequal %}
+                {% endifequal %}
+                {% ifequal forloop.counter 5 %}
+                    {% ifequal i page %}
+                        <li>
+                            {{ i }}
+                        </li>
+                    {% else %}
+                        <li>
+                            <a href="/user/album/list?page={{ i }}">{{ i }}</a>
+                        </li>
+                    {% endifequal %}
+                {% endifequal %}
+                {% ifequal forloop.counter 6 %}
+                    {% ifequal i page %}
+                        <li>
+                            {{ i }}
+                        </li>
+                    {% else %}
+                        <li>
+                            <a href="/user/album/list?page={{ i }}">{{ i }}</a>
+                        </li>
+                    {% endifequal %}
+                {% endifequal %}
+            {% endfor %}
+        {% ifnotequal page lastpage %}
+            <li class="next">
+                <a href="/user/album/list?page={{ next }}">次へ &raquo;</a>
+            </li>
+        {% endifnotequal %}
+    </ul>
+{% endifequal %}
+</div><!--/main-->
+<!-- navi -->
+{% include "../navi.html" %}
+<!-- /navi -->
+</div><!--/main_wrap-->
+</div><!--/container-->
+<!-- footer -->
+{% include "../footer.html" %}
+<!--/footer-->
+<!-- analytics -->
+{% include "../analytics.html" %}
+<!-- /analytics -->
+</body>
+</html>

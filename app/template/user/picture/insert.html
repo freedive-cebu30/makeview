@@ -1,0 +1,71 @@
+{% include "../headerlow.html" %}
+<script type="text/javascript" src="../../../../js/jquery.MultiFile.js"></script>
+<script type="text/javascript" src="../../../../js/jquery.form.js"></script>
+<script type="text/javascript" src="../../../../js/jquery.MetaData.js"></script>
+<script type="text/javascript" src="../../../../js/jquery.blockUI.js"></script>
+</head>
+
+<body id="bodymain">
+<div id="container"><!--container-->
+
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<!-- headerdetail -->
+{% include "../headerdetail.html" %}
+<!-- /headerdetail -->
+<!-- main_wrap -->
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<div id="main_wrap" class="clearfix"><!--main-->
+
+<!-- main -->
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<div id="login_main">
+
+<h2 id="h2_title">画像アップロード</h2>
+
+<div id="login_header" class="clearfix">
+<!--div id="div_new">
+	<ul class="ul_navi">
+		<li>
+			<a href="/album/list">アルバム一覧</a>
+		</li>
+		<li>
+			<a href="/album/insert">新規アルバム登録</a>
+		</li>
+		<li>
+			<a href="/album/slideshow/list">スライドショー作成</a>
+		</li>
+	</ul>
+</div-->
+
+<br class="clearboth" />
+</div>
+<form method="POST" action="/user/picture/insertend" enctype="multipart/form-data">
+<input type="file" class="multi" name="binary" maxlength="10" value="　アップロード　" />
+<input type="hidden" name="tooken" id="tooken" value="{{tooken}}" />
+<div class="upfile_list">
+	<p>ファイルを選択し、アップロードして下さい。最大10枚まで複数アップロード可能です。</p>
+	<p style="color:red;">サイズが1M未満の画像しかアップロードできません。</p>
+</div>
+
+<br />
+<p class="a_center">
+	<input type="submit" value="　画像登録　" />
+</p>
+</form>
+<br class="clearboth" />
+</div><!--/main-->
+
+<!-- navi -->
+{% include "../navi.html" %}
+<!-- /navi -->
+</div><!--/main_wrap-->
+</div><!--/container-->
+
+<!-- footer -->
+{% include "../footer.html" %}
+<!--/footer-->
+<!-- analytics -->
+{% include "../analytics.html" %}
+<!-- /analytics -->
+</body>
+</html>

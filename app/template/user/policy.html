@@ -1,0 +1,101 @@
+{% include "header.html" %}
+<style type="text/css">
+    .tooltip{font-family:Verdana, Arial, Helvetica, sans-serif;
+    font-size:12px; }
+    a:hover {background:#ffffff; text-decoration:none;} /*BG color is a must for IE6*/
+    a.tooltip span {display:none; padding:2px 3px; margin-left:8px; width:250px;}
+    a.tooltip:hover span{display:inline; position:absolute; border:1px solid #cccccc; background:#ffffff; color:#6c6c6c;}
+</style>
+</head>
+
+<body id="bodymain">
+
+<div id="container"><!--container-->
+
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<!-- header -->
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<div id="header">
+<a name="top" id="top"></a>
+<!--left-->
+<div id="h_left">
+<h1>
+	<a href="/index" class="tooltip">
+		<img src="../../../images/id.jpg" alt="メイクビュー｜googlemap連動写真共有サービス" title="メイクビュー｜googlemap連動写真共有サービス" />
+		<span>クリックするとトップページに遷移します</span>
+	</a>
+</h1>
+</div>
+<!--right-->
+<div id="h_right">
+        {% ifequal loginFlg 1 %}
+            <a href="user/album/list">
+                <img src="../../../images/bt_mypage.jpg" alt="マイページ" title="マイページ" />
+            </a>
+            <a href="{{logout_link}}">
+                <img src="../../../images/bt_logout.jpg" alt="ログアウト" title="ログアウト" />
+            </a>
+        {% else %}
+            <a href="{{user_top_link}}" style="text-decoration: none; margin-left:100px;">
+            	<img src="../../../images/bt_login.jpg" alt="ログイン" title="ログイン" />
+			</a>
+        {% endifequal %}
+        <a href="https://www.google.com/accounts/NewAccount?hl=ja">
+            <img src="../../../images/bt_creatac.jpg" alt="googleアカウント作成" title="googleアカウント作成" />
+        </a>
+    </div>
+</div>
+
+
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<!-- serch -->
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<div id="serch">
+<div id="serch_in">
+</div>
+</div>
+
+
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<!-- main_wrap -->
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<div id="main_wrap" class="clearfix"><!--main-->
+<!-- InstanceBeginEditable name="EditRegion3" -->
+
+<h2 id="h2_title">運営について</h2>
+<dl class="dl_about">
+<dt>メイクビューについて</dt>
+<dd>
+google app engineというクラウド環境を利用して、どういったものが作られるだろうか？<br />
+公共性の高いサービスを個人で提供できないだろうか？<br />
+ストリートビューでは見られないようなところをカバーできないかなぁ。<br />
+そんな感じのことを考えながら作成しておりました（^^）<br />
+</dd>
+<dt>管理者について</dt>
+<dd>
+当分の間はβ版ですが、よろしくお願いいたします（^^）<br />
+twitter :japanesejoji<br />
+お問い合わせはログイン後に「お問い合わせ」からお願いいたします。<br />
+送信後に「お問い合わせが完了しました 」と表示されたことを必ず確認して下さい。<br />
+上手く動作しない場合はセキュアな通信に変更後、もう一度お願いいたします。
+</dd>
+<dt>推奨環境</dt>
+<dd>
+Firefox3.5以上、IE7以上、Chrome5以上、Safari5以上
+</dd>
+</dl>
+</dl>
+
+
+</div><!--/main_wrap-->
+</div><!--/container-->
+
+
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<!-- footer -->
+{% include "footer.html" %}
+<!-- analytics -->
+{% include "analytics.html" %}
+<!-- /analytics -->
+</body>
+</html>

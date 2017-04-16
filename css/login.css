@@ -1,0 +1,353 @@
+@charset "utf-8";
+div#login_navi{
+width:160px;
+float:left;
+}
+#login_navi h2{
+background:url(../images/bg_h2.jpg) repeat-x;
+padding:7px;
+font-size:13px;
+font-weight:normal;
+border-bottom:solid 1px #dddddd;
+}
+#login_navi ul{
+margin:10px 0 20px 10px;
+font-size:13px;
+}
+#login_navi li{
+list-style:none;
+margin:0 0 5px 0;
+padding:0 0 0 15px;
+background:url(../images/list_icon.jpg) 0 3px no-repeat;
+}
+div#login_main{
+width:720px;
+float:right;
+}
+#list_alubm{
+background:#FAFAFA;
+padding:30px 20px;
+border:dotted 1px #CCCCCC;
+width:590px;
+margin:0 auto;
+}
+#list_alubm h2{
+font-size:16px;
+margin:0 0 10px 0;
+padding:0 0 5px 0;
+color:#333333;
+text-align:center;
+font-weight:normal;
+border-bottom:dotted 1px #666666;
+}
+#list_alubm li{
+float:left;
+list-style:none;
+margin:0 0 20px 15px;
+height: 200px;
+}
+#list_alubm p{
+color:#FFFFFF;
+padding: 6px 0;
+text-align:center;
+margin:10px 0;
+background:url(../images/button.jpg) no-repeat;
+}
+#list_alubm p a:link,#list_alubm p a:visited,#list_alubm{
+color:#ffffff;
+text-decoration:none;
+}
+#list_alubm p a:hover{
+color:#99CC00;
+}
+#login_header{
+margin:0 0 30px 0;
+padding:0 0 16px 0;
+border-bottom:solid 1px #CCCCCC;
+}
+#login_header2{
+
+}
+div#div_new{
+float:left;
+font-size:11px;
+}
+div#div_new2{
+font-size:11px;
+}
+div#login_serch{
+float:right;
+margin-right:30px;
+}
+div#div_new li{
+list-style:none;
+}
+.dl_form{
+border:solid 1px #848484;
+}
+.dl_form dt{
+width:150px;
+text-align:right;
+border:solid 1px #848484;
+}
+.dl_form dd{
+margin:-20px 0 10px 170px;
+border:solid 1px #848484;
+}
+.dl_form input:hover,.dl_form textarea:hover{
+background:#F7FFD7;
+}
+.button_alubmcreate{
+background:url(../images/button_newalubm.jpg);
+width:146px;
+height:47px;
+border:0;
+margin: 20px 200px 20px 100px;
+cursor:pointer;
+}
+.button_alubmcreate:active{
+background:url(../images/button_newalubm_on.jpg);
+width:146px;
+height:47px;
+border:0;
+margin: 20px 200px 20px 100px;
+cursor:pointer;
+}
+.button_alubmupdate{
+background:url(../images/button_updatealubm.jpg);
+width:146px;
+height:47px;
+border:0;
+margin: 20px 200px 20px 100px;
+cursor:pointer;
+}
+.button_alubmupdate:active{
+background:url(../images/button_updatealubm_on.jpg);
+width:146px;
+height:47px;
+border:0;
+margin: 20px 200px 20px 100px;
+cursor:pointer;
+}
+#div_alubm_album input,#div_alubm_thum input{
+padding:2px;
+font-size:12px;
+}
+#div_alubm_thum{
+float:left;
+width:480px;
+}
+#div_alubm_thum ul{
+margin:0 0 20px 0;
+}
+#div_alubm_thum li{
+list-style:none;
+float:left;
+padding:0 0 5px 5px;
+}
+#div_alubm_thum img,#list_alubm img{
+border:solid 2px #E6E6E6;
+}
+#div_alubm_thum a:hover img,#list_alubm a:hover img{
+border:solid 2px #99CC33;
+}
+#div_alubm_thum h3{
+padding:0 0 5px 0;
+font-size:16px;
+border-bottom:dotted 1px #CCCCCC;
+margin:0 0 5px 0;
+font-weight:normal;
+}
+#div_alubm_thum p{
+font-size:12px;
+margin:5px 0 10px 0;
+padding:0;
+}
+#div_alubm_album{
+float:right;
+width:200px;
+margin:0 10px 0 0;
+}
+#div_alubm_album h3{
+padding:0 0 5px 0;
+font-size:16px;
+border-bottom:dotted 1px #CCCCCC;
+margin:0 0 5px 0;
+font-weight:normal;
+}
+.div_slideshowalubm{
+width:120px;
+float:left;
+margin:0 auto 5px 40px;
+}
+.alubm_thum{
+width:120px;
+height:120px;
+background:url(../images/img_blankalubm.jpg) no-repeat;
+}
+.on_alubm{
+width:120px;
+height:120px;
+background:url(../images/img_alubm.jpg) no-repeat;
+}
+.div_slideshowalubm p{
+padding:5px 0;
+text-align:center;
+}
+p.on_alubm_title{
+text-align:center;
+font-weight:bold;
+font-size:14px;
+color:#333333;
+padding:55px 0 0 0;
+}
+#list_pictureremove{
+background:#FAFAFA;
+padding:30px 20px;
+border:dotted 1px #CCCCCC;
+width:510px;
+margin:0 auto;
+}
+#list_pictureremove ul{
+margin:10px 0 20px 23px;
+}
+#list_pictureremove li{
+list-style:none;
+float:left;
+margin:0 0 5px 10px;
+}
+#list_pictureremove img{
+border:solid 2px #E6E6E6;
+}
+#list_pictureremove a:hover img{
+border:solid 2px #99CC33;
+}
+#list_alubmremove{
+background:#FAFAFA;
+padding:30px 20px;
+border:dotted 1px #CCCCCC;
+width:610px;
+margin:0 auto;
+}
+#list_alubmremove ul{
+margin:10px 0 20px 23px;
+}
+#list_alubmremove li{
+list-style:none;
+float:left;
+margin:0 0 5px 10px;
+height:230px;
+width:130px;
+}
+#list_alubmremove img{
+border:solid 2px #E6E6E6;
+}
+#list_alubmremove a:hover img{
+border:solid 2px #99CC33;
+}
+.input_slidere{
+width:104px;
+height:70px;
+margin:0 0 15px 0 !important;
+margin-left:-30px;
+font-size:11px;
+padding:3px;
+}
+*:first-child+html .input_slidere{
+margin-left:-30px;
+}
+.input2_slidere{
+width:104px;
+font-size:11px;
+padding:3px;
+margin:0 0 15px 0 !important;
+margin-left:-30px;
+}
+*:first-child+html .input2_slidere{
+margin-left:-30px;
+}
+#list_alubmremove h4{
+font-size:14px;
+margin:0 0 3px 0;
+font-weight:normal;
+}
+.upfile_list{
+padding:10px;
+margin:10px 0;
+background:#F2F2F2;
+}
+.MultiFile-label{
+padding:10px;
+margin:10px 0;
+background:#F2F2F2;
+}
+ul.pager {
+margin: 10px;
+font-family:Arial, Helvetica, sans-serif;
+}
+ul.pager li {
+float: left;
+margin-right: 10px !important;
+padding-right: 10px !important;
+border-right: 1px #999999 solid;
+list-style:none;
+}
+ul.pager li.next {
+border-right: none;
+margin-right:5px;
+padding-right:0;
+}
+ul.pager li a:link,
+ul.pager li a:visited {
+color: #3366FF;
+text-decoration: none;
+}
+ul.pager li a:hover,
+ul.pager li a:active {
+color: #FF6633;
+text-decoration: none;
+}
+ul.pager li em {
+font-weight: bold;
+}
+.album_insert{
+width: 620px;
+border-collapse: collapse;
+border: 1px #848484 solid;
+}
+.album_insert td{
+border: 1px #848484 solid;
+}
+.album_detail{
+width: 500px;
+border-collapse: collapse;
+border: 1px #848484 solid;
+}
+.album_detail td{
+border: 1px #848484 solid;
+}
+.detail {
+list-style:none;
+margin: 20px 0px 10px 100px;
+}
+.detail li{
+float:left;
+margin: 0px 20px 0px 0px;
+}
+.register_ok{
+width:480px;
+list-style:none;
+float:left;
+margin: 0px 0px 0px 100px;
+padding:0px 0px 0px 0px;
+}
+.inquiry_insert{
+width: 400px;
+border-collapse: collapse;
+border: 1px #848484 solid;
+}
+.order_ul{
+float:left;
+margin: 0px;
+padding:10px 0px 0px 0px;
+}

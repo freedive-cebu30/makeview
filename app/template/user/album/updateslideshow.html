@@ -1,0 +1,169 @@
+{% include "../headerlow.html" %}
+<link rel="stylesheet" href="../../../../css/main.css" type="text/css" />
+<link href='../../../../css/zoombox.css' rel='stylesheet' type='text/css' />
+<script type="text/javascript" src="../../../../js/zoombox.js"></script>
+<script type="text/javascript" src="../../../../js/jquery.validate.min.js"></script>
+<script type="text/javascript">
+    $(function() {
+      zoombox.init();
+    });
+</script>
+<script type="text/javascript">
+
+    function formSubmit(formId, action){
+
+        var list = new Array({{ datas|length }});
+        submitFlg = false;
+        for(var i = 0; i < list.length; i++){
+            var pictureId = document.getElementById("pictureid"+i);
+            if (pictureId.checked) {
+                submitFlg = true;
+                break;
+            }
+        }
+        if (submitFlg) {
+            var changeForm = document.getElementById(formId);
+            changeForm.action = action;
+            changeForm.submit();
+        } else {
+            alert("チェックしてからボタンを押して下さい");
+        }
+    }
+
+    function setCheck(labId, picId){
+        var labelId   = "";
+        var pictureId = "";
+
+        labelId = document.getElementById(labId);
+
+        if(labelId.value !=""){
+            pictureId = document.getElementById(picId);
+            pictureId.checked = true;
+        }
+    }
+
+    function sendFlg(id, form){
+        var changeForm = document.getElementById(id);
+        changeForm.action = form;
+        changeForm.submit();
+      }
+
+</script>
+<script type="text/javascript">
+        $(document).ready(function() {
+            $("#main").validate({
+                rules : {
+                    {% for data in datas %}
+                        comment{{data.key.id}}: {
+                            maxlength: 20
+                        },
+                    {% endfor %}
+                },
+                messages: {
+                    {% for data in datas %}
+                        comment{{data.key.id}}: {
+                            maxlength: "コメントは20文字までです。"
+                        },
+                    {% endfor %}
+                },
+                errorClass: "myError"
+
+            });
+        });
+</script>
+<style type="text/css">
+    label.myError {
+        color: red;
+        font-size:10px;
+
+    }
+</style>
+</head>
+
+<body id="bodymain">
+
+<div id="container"><!--container-->
+
+<!-- headerdetail -->
+{% include "../headerdetail.html" %}
+<!-- /headerdetail -->
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<!-- main_wrap -->
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<div id="main_wrap" class="clearfix"><!--main-->
+
+<!-- main -->
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<div id="login_main">
+
+<h2 id="h2_title">スライドショーの変更</h2>
+
+<!--div id="login_header" class="clearfix">
+    <div id="div_new">
+        <ul class="ul_navi">
+            <li><a href="login_top.html">アルバム一覧</a></li>
+            <li><a href="login_alubmcreate.html">新規アルバム登録</a></li>
+            <li><a href="login_slideshowcreate.html">スライドショー作成</a></li>
+        </ul>
+    </div>
+</div-->
+<br class="clearboth" />
+
+<!--input type="checkbox" id="check_pict"/><label id="check_pict">&nbsp;画像を拡大</label>&nbsp;&nbsp;-->
+<span class="font_red">※サムネイルをクリックすると、拡大画像が表示されます。</span>
+<br />
+※チェックをつけないと削除・コメント変更は行ないません。
+<br /><br />
+<form method="POST" action="/user/album/updateslideshowend" id="main" />
+<div id="list_alubmremove">
+<h3><a href="/user/album/orderpicture?albumid={{album.key.id}}">スライドショー並び替え</a></h3>
+<ul>
+    {% for data in datas %}
+    <li>
+        <a href="/picture/img/big?pictureid={{data.key.id}}" rel="zoombox[gallery]" >
+            <img src="/picture/img/small?pictureid={{data.key.id}}" title="{{data.title}}"/>
+        </a>
+        <br />
+        <input type="checkbox" name="pictureid" id="pictureid{{ forloop.counter0 }}" value="{{data.key.id}}" />
+        <label id="check_pict" for="pictureid{{ forloop.counter0 }}" >&nbsp;画像の削除</label>
+        <br />
+        <textarea class="input_slidere" name="comment{{data.key.id}}" id="comment{{data.key.id}}" tabindex="{{ forloop.counter }}" onChange='javascript:setCheck("comment{{data.key.id}}", "pictureid{{ forloop.counter0 }}")'>{{data.picture_comment}}</textarea>
+        <br />
+        <label for="comment{{data.key.id}}" class="myError" generated="true" /></label>
+    </li>
+    {% endfor %}
+</ul>
+<br class="clearboth" />
+
+<br /><br />
+<p class="a_center">
+    <input type="hidden" name="albumid" value="{{albumid}}" />
+    <!--input type="button" value="コメントを変更" onClick="javascript:formSubmit('main', '/user/album/updateslideshowend');" /-->
+    <input type="submit" value="コメントを変更" />
+    <input type="button" value="　画像削除　" onClick="javascript:formSubmit('main', '/user/album/deleteslideshow');" />
+    <input type="button" value="　スライドショーに戻る　" onClick="javascript:sendFlg('order', '/slideshow');">
+</p>
+</form>
+<form method="GET" id ="order" action="">
+    <input type="hidden" name ="albumid" id="albumid" value="{{albumid}}">
+</form>
+</div><!--//div_alubm_thum-->
+
+<br class="clearboth" />
+
+</div><!--/main-->
+
+<!-- navi -->
+{% include "../navi.html" %}
+<!-- /navi -->
+</div><!--/main_wrap-->
+</div><!--/container-->
+
+<!-- footer -->
+{% include "../footer.html" %}
+<!--/footer-->
+<!-- analytics -->
+{% include "../analytics.html" %}
+<!-- /analytics -->
+</body>
+</html

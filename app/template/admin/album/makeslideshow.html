@@ -1,0 +1,143 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <script type="text/javascript" src="../../../../js/jquery-1.3.2.min.js"></script>
+    <script type="text/javascript" src="../../../../js/jquery-ui-1.7.2.custom.min.js"></script>
+    <script type="text/javascript">
+        $(function() {
+          {% for data in datas %}
+            $('#{{data.key.id}}').draggable({
+                cursor: 'move',
+                helper: 'clone',
+                opacity: 0.8,
+                revert: true
+            });
+          {% endfor %}
+        });
+        $(function(){
+          {% for data in albumdatas %}
+            $('#{{data.key.id}}').droppable({
+                drop: function(event, ui){
+                    var pictureid = ui.draggable.context.id;
+                    var albumid   = {{data.key.id}};
+                    var data = 'data='+pictureid+":"+albumid
+                    url = '/admin/album/addalbum';
+                    if(pictureid !='' && albumid !=''){
+                        $.post(url, data, function(status){
+                            var bool = status.substring(0,1);
+                            if(bool == '1'){
+
+                                jQuery('#{{data.key.id}}').get(0).style.backgroundColor='red';
+                                setTimeout("changeCss({{data.key.id}})",1000);
+
+                            }else if(bool == '2'){
+                                alert('一つのアルバムに同じ画像は登録できません。');
+
+                            }else if(bool == '3'){
+                                alert('最大登録数は20枚です');
+
+                            }else if(bool == '4'){
+
+                                alert('登録に失敗しました。やり直して下さい！？');
+                            }
+
+                        })
+
+
+                    }
+                }
+
+            })
+            {% endfor %}
+        });
+
+        function changeCss(key){
+            var id = document.getElementById(key);
+            id.style.backgroundColor='';
+        }
+
+
+    </script>
+</head>
+<body>
+    <h1>管理のアルバム作成ページです</h1>
+    <table>
+        <tr>
+            <td>
+                <a href="/admin/user/list">一覧に戻る</a>
+            <td>
+            <td>
+                <a href="/admin/user/detail?userid={{userid.key.id}}">プロフィールの詳細を見る</a>
+            </td>
+            <td>
+                <a href="/admin/user/showpicture?userid={{userid.key.id}}">画像を見る</a>
+            </td>
+        <tr>
+    </table>
+    <form method="POST" action="update">
+    <table>
+        {% for data in datas %}
+            {% if forloop.counter0|divisibleby:"5" %}
+                <tr>
+            {% endif %}
+                <td>
+                    <div id="{{data.key.id}}" class="" style="width: 120px; height:120px">
+                        <img src="/admin/picture/img/small?pictureid={{data.key.id}}" />
+                    </div>
+                </td>
+            {% if forloop.last %}
+                    </tr>
+            {% else %}
+                {% if forloop.counter|divisibleby:"5" %}
+                    </tr>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        <tr>
+            <td>
+                {% for i in picturepages %}
+                    {% ifequal i picturepage %}
+                        {{ i }}
+                    {% else %}
+                        <a href="/admin/album/makeslideshow?picturepage={{ i }}">{{ i }}</a>
+                    {% endifequal %}
+                {% endfor %}
+            </td>
+        </tr>
+    </table>
+    <p>選択した画像をアルバムにドロップして下さい</p>
+    <table>
+        {% for data in albumdatas %}
+
+            {% if forloop.counter0|divisibleby:"5" %}
+                <tr>
+            {% endif %}
+                <td>
+                        <div id="{{data.key.id}}" style="border-style:groove; height:120px; width:120px">{{data.title}}</div>
+                </td>
+            {% if forloop.last %}
+                    </tr>
+            {% else %}
+                {% if forloop.counter|divisibleby:"5" %}
+                    </tr>
+                {% endif %}
+            {% endif %}
+
+        {% endfor %}
+        <tr>
+            <td>
+                {% for i in albumpages %}
+                    {% ifequal i albumpage %}
+                        {{ i }}
+                    {% else %}
+                        <a href="/admin/album/slideshowalbumlist?albumpage={{ i }}">{{ i }}</a>
+                    {% endifequal %}
+                {% endfor %}
+            </td>
+        </tr>
+
+    </table>
+    </form>
+</body>
+</html>

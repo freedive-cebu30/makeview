@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+	<h1>管理のユーザー削除確認ページです</h1>
+	<table>
+		<form method="POST" action="deleteend">
+			<tr>
+				<td>表示名</td>
+				<td>{{datas.name}}</td>
+			</tr>
+			<tr>
+				<td>ニックネーム</td>
+				<td>{{datas.nickname}}</td>
+			</tr>
+			<tr>
+				<td>メール</td>
+				<td>{{datas.email}}</td>
+			</tr>
+			<tr>
+				<td>住所</td>
+				<td>{{datas.address}}</td>
+			</tr>
+			<tr>
+				<td>電話番号</td>
+				<td>{{datas.telFirst}}</td>
+			</tr>
+			<tr>
+				<td>電話番号2</td>
+				<td>{{datas.telSecond}}</td>
+			</tr>
+			<tr>
+				<td>電話番号3</td>
+				<td>{{datas.telThird}}</td>
+			</tr>
+			<tr>
+				<td>年齢</td>
+				<td>{{datas.age}}</td>
+			</tr>
+			<tr>
+				<td>性別</td>
+				<td>
+					{% ifequal datas.sex 0 %}
+						男
+					{% else %}
+						女
+					{% endifequal %}
+				</td>
+			</tr>
+			<tr>
+				<td>代表者</td>
+				<td>{{datas.delegate}}</td>
+			</tr>
+			<tr>
+				<td>担当者</td>
+				<td>{{datas.chargePerson}}</td>
+			</tr>
+			<tr>
+				<td>資本金</td>
+				<td>{{datas.capital}}</td>
+			</tr>
+			<tr>
+				<td>法人指定</td>
+				<td>
+					{% ifequal datas.corporateFlg 0 %}
+						男
+					{% else %}
+						女
+					{% endifequal %}
+				</td>
+			</tr>
+			<tr>
+				<td>会社名</td>
+				<td>{{datas.corporate}}</td>
+			</tr>
+			<tr>
+				<td>備考</td>
+				<td>{{datas.recital}}</td>
+			</tr>
+			<tr>
+				<td>
+				<input type="submit" value="削除" />
+				</td>
+			</tr>
+			<input type="hidden" name="id" value="{{datas.key.id}}" />
+		</form>
+	</table>
+	<a href="/admin/user/list">一覧に戻る</a>
+
+</body>

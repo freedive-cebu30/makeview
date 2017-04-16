@@ -1,0 +1,22 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+	<body>
+		<form method="post" action="/admin/import/prefecture" enctype="multipart/form-data">
+		県名ファイル: <input type="file" name="file" size="30" />
+		<input type="submit" value="アップロード" />
+		<br />
+		沿線ファイル: <input type="file" name="line" size="30" />
+		<input type="submit" value="アップロード" />
+		<br />
+		駅名ファイル: <input type="file" name="station" size="30" />
+		<input type="submit" value="アップロード" />
+		<input type="radio" name="case" value="1">県名ファイル
+		<input type="radio" name="case" value="2">沿線ファイル
+		<input type="radio" name="case" value="3">駅ファイル
+		</form>
+
+	</body>
+</html>

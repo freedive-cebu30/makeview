@@ -1,0 +1,375 @@
+{% include "header.html" %}
+<link href='../../../css/basic.css' rel='stylesheet' type='text/css' media='screen' />
+<link href='../../../css/confirm.css' rel='stylesheet' type='text/css' media='screen' />
+<link href="../../../css/thickbox.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="http://maps.google.co.jp/maps/api/js?sensor=false"></script>
+<script type="text/javascript" src="../../../js/jquery.validate.min.js"></script>
+<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+<script type="text/javascript">
+    jQuery(function($){
+
+        $(".mapPrefecture").jQselectable({
+
+            set: "fadeIn",
+            setDuration: "fast",
+            opacity: .9,
+
+            callback: function (){
+                var prefecture = document.getElementById("mapPrefecture");
+                var data = 'prefecture='+prefecture.value;
+                var url = '/index/makemap';
+
+                $.post(url, data, function(status){
+
+                    var json = eval(status);
+                    initialize(json);
+
+                })
+            }
+        })
+    });
+
+     var map_canvas;
+
+    function initialize(json){
+
+        var mapTypeOpts = {
+            mapTypeIds : [google.maps.MapTypeId.ROADMAP]
+
+        };
+
+        if(json.length >= 1){
+
+            if (json[0] == "none") {
+                alert("データが登録されていません");
+            }
+            else {
+
+                for (var i = 0; i < 1; i++) {
+                    var albumId   = json[i][0];
+                    var title     = json[i][1];
+                    var latitude  = json[i][2];
+                    var longitude = json[i][3];
+
+                    initPos = new google.maps.LatLng(latitude, longitude);
+                }
+
+                var mapOptions = {
+                    center: initPos,
+                    zoom: 10,
+                    scrollwheel: false,
+                    mapTypeId: google.maps.MapTypeId.ROADMAP,
+                    mapTypeControlOptions: mapTypeOpts
+                };
+                var mapId = document.getElementById("map_canvas");
+                map_canvas = new google.maps.Map(mapId, mapOptions);
+
+                for (var i = 0; i < json.length; i++) {
+                    var albumId   = json[i][0];
+                    var title     = json[i][1];
+                    var latitude  = json[i][2];
+                    var longitude = json[i][3];
+
+                    markerPos = new google.maps.LatLng(latitude, longitude);
+
+                    var markerOpts = {
+                        position: markerPos,
+                        map: map_canvas,
+                        icon: "../../../images/mark.png"
+                    };
+
+                    marker = new google.maps.Marker(markerOpts);
+                    createSlideShow(map_canvas, marker, albumId);
+                    createTitle(map_canvas, marker, title);
+                    deleteTitle(marker);
+
+                }//for
+            }
+        }else{
+            var albumLength = {{ AlbumDatas|length }};
+
+            {% for album in AlbumDatas %}
+                {% ifequal forloop.counter0 0 %}
+                    var albumId   = {{album.key.id}};
+                    var title     = "{{album.title|escape}}";
+                    var latitude  = {{album.latitude}};
+                    var longitude = {{album.longitude}};
+                {% endifequal %}
+            {% endfor %}
+
+            initPos = new google.maps.LatLng(latitude, longitude);
+
+            var mapOptions = {
+                center: initPos,
+                zoom: 10,
+                scrollwheel: false,
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                mapTypeControlOptions : mapTypeOpts
+            };
+            var mapId = document.getElementById("map_canvas");
+            map_canvas = new google.maps.Map(mapId, mapOptions);
+
+            {% for album in AlbumDatas %}
+                var albumId   = {{album.key.id|escape}};
+                var title     = "{{album.title|escape}}";
+                var latitude  = {{album.latitude|escape}};
+                var longitude = {{album.longitude|escape}};
+
+                markerPos = new google.maps.LatLng(latitude, longitude);
+
+                var markerOpts = {
+                    position: markerPos,
+                    map: map_canvas,
+                    icon: "../../../images/mark.png"
+                };
+
+                marker = new google.maps.Marker(markerOpts);
+                createSlideShow(map_canvas, marker, albumId);
+                createTitle(map_canvas, marker, title);
+                deleteTitle(marker);
+            {% endfor %}
+        }
+    }
+
+    function createSlideShow(map_canvas,marker,albumId){
+
+        google.maps.event.addListener(marker, "click", function(){
+            //var domain = "localhost:8084";
+            var domain = "make-view.appspot.com";
+            location.href = "http://"+domain+"/slideshow?albumid="+albumId+"&indexflg=1";
+        });
+    }
+
+    function createTitle(map_canvas,marker,title){
+
+        google.maps.event.addListener(marker, "mouseover", function(){
+            var infoWndOpts = {
+                content : title
+            }
+
+            infoWnd = new google.maps.InfoWindow(infoWndOpts);
+            infoWnd.open(map_canvas, marker);
+        });
+    }
+
+    function deleteTitle(marker){
+
+        google.maps.event.addListener(marker, "mouseout", function(){
+
+            infoWnd.close();
+
+        });
+    }
+
+    google.maps.event.addDomListener(window, "load", initialize);
+</script>
+
+<style type="text/css">
+    * {font-family:Verdana, Arial, Helvetica, sans-serif;
+    /*font-size:11px;*/ }
+    a:hover {background:#ffffff; text-decoration:none;} /*BG color is a must for IE6*/
+    a.tooltip span {display:none; padding:2px 3px; margin-left:8px; width:130px;}
+    a.tooltip:hover span{display:inline; position:absolute; border:1px solid #cccccc; background:#ffffff; color:#6c6c6c;}
+
+</style>
+</head>
+
+<body id="bodymain">
+
+<div id="container"><!--container-->
+
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<!-- header -->
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<div id="header">
+    <a name="top" id="top"></a>
+    <!--left-->
+    <div id="h_left">
+        <h1>
+            <a href="/index">
+                <img src="../../../images/id.jpg" alt="メイクビュー｜googlemap連動写真共有サービス" title="メイクビュー｜googlemap連動写真共有サービス" />
+            </a>
+        </h1>
+    </div>
+    <!--right-->
+    <div id="h_right">
+        {% ifequal loginFlg 1 %}
+            <a href="{{user_top_link}}" style="text-decoration: none;">
+                <img src="../../../images/bt_mypage.jpg" alt="マイページ" title="マイページ" />
+            </a>
+            <a href="{{logout_link}}" style="text-decoration: none;">
+                <img src="../../../images/bt_logout.jpg" alt="ログアウト" title="ログアウト" />
+            </a>
+        {% else %}
+            <a href="{{user_top_link}}" style="text-decoration: none; margin-left:100px;">
+                <img src="../../../images/bt_login.jpg" alt="ログイン" title="ログイン" />
+            </a>
+        {% endifequal %}
+        <a href="https://www.google.com/accounts/NewAccount?hl=ja">
+            <img src="../../../images/bt_creatac.jpg" alt="googleアカウント作成" title="googleアカウント作成" />
+        </a>
+    </div>
+</div>
+
+
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<!-- serch -->
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<div id="serch">
+    <div id="serch_in">
+        <form method="GET" action="/indexsearch">
+            <!--input-->
+            <input type="text" name="searchValue" id="searchValue" value="{{searchValue|escape}}" size="30" />
+            <!--県名-->
+            <select name="prefecture" id="prefecture" class="prefecture" >
+                <option value="" class="br" selected="selected">都道府県名</option>
+                {% for preVal in PreDatas %}
+                    <option {% ifequal preVal.prefecture_name prefecture %}selected="selected"{% endifequal %} {% ifequal preVal.prefecture_number 1 %}class="br"{% endifequal %} {% ifequal preVal.prefecture_number 7 %}class="br"{% endifequal %}{% ifequal preVal.prefecture_number 14 %}class="br"{% endifequal %} {% ifequal preVal.prefecture_number 17 %}class="br"{% endifequal %} {% ifequal preVal.prefecture_number 20 %}class="br"{% endifequal %} {% ifequal preVal.prefecture_number 24 %}class="br"{% endifequal %} {% ifequal preVal.prefecture_number 30 %}class="br"{% endifequal %} {% ifequal preVal.prefecture_number 39 %}class="br"{% endifequal %} value="{{preVal.prefecture_name}}">{{preVal.prefecture_name}}</option>
+                {% endfor%}
+            </select>
+            <!--路線名-->
+            <select class="line" name="line" id="line" >
+                {% if lineDatas|length_is:0 %}
+                    <option value="" class="br" selected="selected">路線名</option>
+                {% else %}
+                        <option value="" class="br" selected="selected">路線名</option>
+                    {% for lineVal in lineDatas %}
+                        <option value="{{lineVal}}" {% if forloop.counter|divisibleby:"4" %}class="br"{% endif %}{% ifequal lineVal line %} selected="selected" {% endifequal %}>{{lineVal}}</option>
+                    {% endfor%}
+                {% endif %}
+            </select>
+            <!--駅名-->
+            <select class="station" name="station" id="station">
+                {% if StationDatas|length_is:0 %}
+                    <option value="" class="br" selected="selected">駅名</option>
+                {% else %}
+                        <option value="" class="br" selected="selected">駅名</option>
+                    {% for stationVal in StationDatas %}
+                        <option value="{{stationVal}}" {% if forloop.counter|divisibleby:"4" %}class="br"{% endif %} {% ifequal stationVal station %} selected="selected" {% endifequal %}>{{stationVal}}</option>
+                    {% endfor%}
+                {% endif %}
+            </select>
+            <!--ボタン-->
+			<input type="hidden" name="searchflg" value="1" />
+            <input type="submit" value="検　索" id="bt_serch">&nbsp;&nbsp;
+        </form>
+    </div>
+</div>
+
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<!-- main_wrap -->
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<div id="main_wrap" class="clearfix"><!--main-->
+
+<!--comment:::::::::::::::::::::::-->
+<div id="top_left">
+<img src="../../../images/top_txt.jpg" alt="メイクビューはgooglemapに連動することで、地域や詳細な場所を特定した写真がアップできるサービスです。
+ストリートビューでは見つけられない場所の写真もあるかも？" />
+</div>
+<div id="top_right"><a href="/aboutsite"><img src="../../../images/bt_about.jpg" alt="もっと詳しく" /></a></div>
+
+<!--list:::::::::::::::::::::::-->
+<div id="recent_list"><!--list-->
+<!--p id="recent_p">人気画像　｜　週間　｜　月間　｜　年間</p-->
+<p id="recent_p"></p>
+
+<!--list01-->
+{% for album in datas %}
+<div class="recent_part">
+    <p class="list_pict">
+        <a href="/slideshow?albumid={{album.key.id}}&indexflg=1" class="tooltip">
+            <img src="/admin/picture/img/small?pictureid={{album.pictureid}}" />
+            <span>{{album.title}}</span>
+        </a>
+    </p>
+    <p class="list_title">
+        <a href="" class="tooltip" >{{album.subtitle}}<span>{{album.title}}</span></a>
+    </p>
+    <p class="list_comment"><a href="/slideshow?albumid={{album.key.id}}&indexflg=1" class="tooltip">{{album.subrecital}}<span>{{album.recital}}</span></a></p>
+    <p class="list_user">{{album.user.nickname}}</p>
+</div>
+{% if forloop.counter|divisibleby:"5" %}
+    <br class="clearboth" />
+{% else %}
+    {% if forloop.last %}
+        <br class="clearboth" />
+    {% endif %}
+{% endif %}
+{% endfor %}
+<!--/list01-->
+</div><!--/list-->
+
+<!--map:::::::::::::::::::::::-->
+{% ifnotequal searchflg "1" %}
+<div id="map_block">
+<div id="map_wrap_left">
+<h2><img src="../../../images/top_h2.jpg" alt="地図から探す" /></h2>
+<!--県名-->
+<div id="map_pref">
+<select class="mapPrefecture" name="mapPrefecture" id="mapPrefecture" >
+    <option value="" class="br" selected="selected">都道府県名</option>
+        <option class="br" value="北海道">北海道</option>
+        <option value="青森">青森県</option>
+        <option value="岩手">岩手県</option>
+        <option value="宮城">宮城県</option>
+        <option value="秋田">秋田県</option>
+        <option value="山形">山形県</option>
+        <option class="br" value="福島">福島県</option>
+        <option value="茨城">茨城県</option>
+        <option value="栃木">栃木県</option>
+        <option value="群馬">群馬県</option>
+        <option value="埼玉">埼玉県</option>
+        <option value="千葉">千葉県</option>
+        <option value="東京">東京都</option>
+        <option class="br" value="神奈川">神奈川県</option>
+        <option value="新潟">新潟県</option>
+        <option value="富山">富山県</option>
+        <option class="br" value="石川">石川県</option>
+        <option value="福井">福井県</option>
+        <option value="山梨">山梨県</option>
+        <option class="br" value="長野">長野県</option>
+        <option value="岐阜">岐阜県</option>
+        <option value="静岡">静岡県</option>
+        <option value="愛知">愛知県</option>
+        <option class="br" value="三重">三重県</option>
+        <option value="滋賀">滋賀県</option>
+        <option selected="selected" value="京都">京都府</option>
+        <option value="大阪">大阪府</option>
+        <option value="兵庫">兵庫県</option>
+        <option value="奈良">奈良県</option>
+        <option class="br" value="和歌山">和歌山県</option>
+        <option value="鳥取">鳥取県</option>
+        <option value="島根">島根県</option>
+        <option value="岡山">岡山県</option>
+        <option value="広島">広島県</option>
+        <option value="山口">山口県</option>
+        <option value="徳島">徳島県</option>
+        <option value="香川">香川県</option>
+        <option value="愛媛">愛媛県</option>
+        <option class="br" value="高知">高知県</option>
+        <option value="福岡">福岡県</option>
+        <option value="佐賀">佐賀県</option>
+        <option value="長崎">長崎県</option>
+        <option value="熊本">熊本県</option>
+        <option value="大分">大分県</option>
+        <option value="宮崎">宮崎県</option>
+        <option value="鹿児島">鹿児島県</option>
+        <option value="沖縄">沖縄県</option>
+</select>
+</div>
+</div><!--/left-->
+</div><!--/map_block-->
+<!--googlemap-->
+<div id="map_canvas" style="width: 900px; height: 550px"></div>
+{% endifnotequal %}
+
+</div><!--/main_wrap-->
+</div><!--/container-->
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<!-- footer -->
+{% include "footer.html" %}
+<!-- analytics -->
+{% include "analytics.html" %}
+<!-- /analytics -->
+</body>
+</html>

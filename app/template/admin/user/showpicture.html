@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+	<h1>管理のユーザー保有画像一覧ページです</h1>
+	<table>
+		<tr>
+			<td>
+				<a href="/admin/user/list">一覧に戻る</a>
+			<td>
+			<td>
+				<a href="/admin/user/detail?userid={{userid.key.id}}">プロフィールの詳細を見る</a>
+			</td>
+			<td>
+				<a href="/admin/user/showalbum?userid={{userid.key.id}}">アルバムを作成する</a>
+			</td>
+		<tr>
+	</table>
+	<table>
+		<form method="POST" action="update">
+			{% for data in datas %}
+				{% if forloop.counter0|divisibleby:"4" %}
+					<tr>
+				{% endif %}
+					<td>
+						<img src="/admin/picture/img/small?pictureid={{data.key.id}}" />
+					</td>
+				{% if forloop.last %}
+						</tr>
+				{% else %}
+					{% if forloop.counter|divisibleby:"4" %}
+						</tr>
+					{% endif %}
+				{% endif %}
+			{% endfor %}
+			<tr>
+				<td>
+					{% for i in pages %}
+						{% ifequal i page %}
+							{{ i }}
+						{% else %}
+							<a href="/admin/user/showpicture?page={{ i }}&userid={{userid.key.id}}">{{ i }}</a>
+						{% endifequal %}
+					{% endfor %}
+				</td>
+			</tr>
+		</form>
+	</table>
+
+
+</body>

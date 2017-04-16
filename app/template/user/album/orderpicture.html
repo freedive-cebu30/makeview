@@ -1,0 +1,139 @@
+{% include "../headerlow.html" %}
+<link rel="stylesheet" href="../../../../css/main.css" type="text/css" />
+<link href='../../../../css/zoombox.css' rel='stylesheet' type='text/css' />
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.3/jquery.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="../../../../js/jquery.dimensions.js"></script>
+<script type="text/javascript" src="../../../../js/ui.mouse.js"></script>
+<script type="text/javascript" src="../../../../js/ui.sortable.js"></script>
+<script type="text/javascript" src="../../../../js/zoombox.js"></script>
+<script type="text/javascript">
+    jQuery.noConflict(); //他のライブラリとの衝突を回避します
+
+jQuery(function($) {
+
+    //sortableオプション
+    var option={
+        start : function(){
+        },
+        stop : function(){
+            var data=[];
+            $("li","#myList").each(function(i,v){
+                data.push(v.id);
+            });
+            orderData = document.getElementById('order');
+            orderData.value=data;
+
+        }
+    };
+
+    //sortable実行
+    $("#myList").sortable(option);
+
+});
+</script>
+<script type="text/javascript">
+    $(function() {
+      zoombox.init();
+    });
+</script>
+<script type="text/javascript">
+  function sendFlg(id, form){
+    var changeForm = document.getElementById(id);
+    changeForm.action = form;
+    changeForm.submit();
+}
+</script>
+</head>
+
+<body id="bodymain">
+<div id="container"><!--container-->
+
+<!-- header -->
+<!-- headerdetail -->
+{% include "../headerdetail.html" %}
+<!-- /headerdetail -->
+
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<!-- main_wrap -->
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<div id="main_wrap" class="clearfix"><!--main-->
+<!-- InstanceBeginEditable name="EditRegion3" -->
+
+<!-- main -->
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<div id="login_main">
+
+<h2 id="h2_title">アルバムの並び替え</h2>
+
+<!--div id="login_header" class="clearfix">
+    <div id="div_new">
+        <ul class="ul_navi">
+            <li><a href="login_top.html">アルバム一覧</a></li>
+            <li><a href="login_alubmcreate.html">新規アルバム登録</a></li>
+            <li><a href="login_slideshowcreate.html">スライドショー作成</a></li>
+        </ul>
+    </div>
+</div-->
+<br class="clearboth" />
+
+写真をドラッグして位置を入れ替えることができます。左上の写真が１番目、右下の写真が一番下になります。
+<br />
+<form method="GET" action="" id="change" >
+    <input type="checkbox" name="zoomFlg" value ="1" {% ifequal zoomFlg "1" %}checked="checked"{% endifequal %} onClick="javascript:sendFlg('change', '/user/album/orderpicture');" /><label id="check_pict">&nbsp;画像を拡大</label>&nbsp;&nbsp;
+    <input type="hidden" name="albumid" value="{{albumid}}" />
+<span class="font_red">※チェックボタンをいれた後サムネイルをクリックすると、拡大画像が表示されます。</span>
+</form>
+<br /><br />
+<div id="list_alubmremove">
+<h3><a href="/user/album/updateslideshow?albumid={{albumid}}">スライドショーの写真編集</a></h3>
+<ul id="myList">
+    {% ifequal zoomFlg "1" %}
+        {% for data in datas %}
+            <a href="/picture/img/big?pictureid={{data.key.id}}" rel="zoombox[gallery]" >
+                <img src="/picture/img/small?pictureid={{data.key.id}}" />
+            </a>
+        {% endfor %}
+    {% else %}
+        {% for data in datas %}
+            <li id="{{data.key.id}}">
+                <img src="/picture/img/small?pictureid={{data.key.id}}" />
+            </li>
+        {% endfor %}
+    {% endifequal %}
+</ul>
+
+<ul class="order_ul">
+	<li>
+	<form method="GET" action="orderpictureend">
+	    <input type="hidden" name ="order" id="order" value="">
+	    <input type="hidden" name ="albumid" id="albumid" value="{{albumid}}">
+	    <input type="submit" value="　並び替える　">
+	</form>
+	</li>
+	<li>
+	<form method="GET" id="albumorder" action="">
+	    <input type="hidden" name ="albumid" id="albumid" value="{{albumid}}">
+	    <input type="button" value="　スライドショーに戻る　" onClick="javascript:sendFlg('albumorder', '/slideshow');">
+	</form>
+	</li>
+</ul>
+<br class="clearboth" />
+</div><!--//div_alubm_thum-->
+<br class="clearboth" />
+</div><!--/main-->
+
+
+<!-- navi -->
+{% include "../navi.html" %}
+<!-- /navi -->
+</div><!--/main_wrap-->
+</div><!--/container-->
+
+<!-- footer -->
+{% include "../footer.html" %}
+<!--/footer-->
+<!-- analytics -->
+{% include "../analytics.html" %}
+<!-- /analytics -->
+</body>
+</html>

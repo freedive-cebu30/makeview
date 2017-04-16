@@ -1,0 +1,163 @@
+{% include "../headerlow.html" %}
+<script type="text/javascript">
+    function formSubmit(formId, action){
+
+        if(confirm("削除してもよろしいですか？")){
+            var changeForm = document.getElementById(formId);
+            changeForm.action = action;
+            changeForm.submit();
+        }
+    }
+</script>
+</head>
+
+<body id="bodymain">
+
+<div id="container"><!--container-->
+
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<!-- headerdetail -->
+{% include "../headerdetail.html" %}
+<!-- /headerdetail -->
+<!-- main_wrap -->
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<div id="main_wrap" class="clearfix"><!--main-->
+<!-- InstanceBeginEditable name="EditRegion3" -->
+
+<!-- main -->
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<div id="login_main">
+
+<h2 id="h2_title">新規アルバム登録</h2>
+
+<!--div id="login_header" class="clearfix">
+    <div id="div_new">
+        <ul class="ul_navi">
+            <li><a href="login_top.html">アルバム一覧</a></li>
+            <li><a href="login_alubmcreate.html">新規アルバム登録</a></li>
+            <li><a href="login_slideshowcreate.html">スライドショー作成</a></li>
+        </ul>
+    </div>
+</div-->
+<br class="clearboth" />
+
+<form method="POST" action="/admin/album/update">
+    <table class="album_detail">
+            <tr>
+                <td>タイトル</td>
+                <td>{{datas.title|escape}}</td>
+            </tr>
+            <tr>
+                <td>郵便番号</td>
+                <td>{{datas.post_code|escape}}</td>
+            </tr>
+            <tr>
+                <td>住所</td>
+                <td>{{datas.address|escape}}</td>
+            </tr>
+            <tr>
+                <td>最寄り駅</td>
+                <td>{{datas.station|escape}}</td>
+            </tr>
+            <tr>
+                <td>最寄りのバス停</td>
+                <td>{{datas.bus_stop|escape}}</td>
+            </tr>
+            <tr>
+                <td>スタート地点</td>
+                <td>{{datas.start|escape}}</td>
+            </tr>
+            <tr>
+                <td>郵便番号</td>
+                <td>{{datas.start_post_code|escape}}</td>
+            </tr>
+            <tr>
+                <td>住所</td>
+                <td>{{datas.start_address|escape}}</td>
+            </tr>
+            <tr>
+                <td>目的地までの所要時間</td>
+                <td>{{datas.time|escape}}</td>
+            </tr>
+            <tr>
+                <td>キーワード</td>
+                    <td>{{datas.tag_str|escape}}</td>
+            </tr>
+            <tr>
+                <td>時間帯</td>
+                <td>
+                    {% ifequal datas.timezone 1 %}
+                            その他
+                    {% endifequal %}
+                    {% ifequal datas.timezone 2 %}
+                            朝
+                    {% endifequal %}
+                    {% ifequal datas.timezone 3 %}
+                            昼
+                    {% endifequal %}
+                    {% ifequal datas.timezone 4 %}
+                            夕方
+                    {% endifequal %}
+                    {% ifequal datas.timezone 5 %}
+                                 夜
+                    {% endifequal %}
+                </td>
+            </tr>
+            <tr>
+                <td>季節</td>
+                <td>
+                    {% ifequal datas.season 1 %}
+                            その他
+                    {% endifequal %}
+                    {% ifequal datas.season 2 %}
+                            春
+                    {% endifequal %}
+                    {% ifequal datas.season 3 %}
+                            夏
+                    {% endifequal %}
+                    {% ifequal datas.season 4 %}
+                            秋
+                    {% endifequal %}
+                    {% ifequal datas.season 5 %}
+                            冬
+                    {% endifequal %}
+                </td>
+            </tr>
+            <tr>
+                <td>備考</td>
+                <td>{{datas.recital|escape}}</td>
+            </tr>
+    </table>
+</form>
+
+<div class="a_left">
+<ul class="detail">
+<form method="POST" action="/user/album/update">
+    <li>
+        <input type="submit" title="編集" value="編集" />
+    </li>
+    <input type="hidden" name="albumid" value="{{datas.key.id}}" />
+</form>
+<form method="POST" id="deleteId" action="">
+    <li>
+        <input type="submit" title="削除" value="削除" onclick="javascript:formSubmit('deleteId', '/user/album/deleteend');return false;" />
+    </li>
+    <input type="hidden" name="albumid" value="{{datas.key.id}}" />
+</form>
+</ul>
+</div>
+</div><!--/main-->
+
+<!-- navi -->
+{% include "../navi.html" %}
+<!-- /navi -->
+</div><!--/main_wrap-->
+</div><!--/container-->
+<!-- footer -->
+{% include "../footer.html" %}
+<!--/footer-->
+<!-- analytics -->
+{% include "../analytics.html" %}
+<!-- /analytics -->
+</body>
+</html>

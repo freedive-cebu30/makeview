@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<style type="text/css">
+*{
+	margin:0;
+	padding:0;
+	}
+li{
+	float:left;
+	margin-right: 10px;
+	list-style:none;
+}
+img{
+	border:0;
+	}
+</style>
+</head>
+<body>
+	<h1>管理のアルバム一覧表示ページです!</h1>
+	<table>
+		<tr>
+			<td>
+				<a href="/admin/album/insert">新規登録</a>
+			</td>
+			<td>
+				<a href="/admin/album/makeslideshow">スライドショー作成</a>
+			</td>
+			<td>
+				<a href="/admin">メニューに戻る</a>
+			</td>
+	</table>
+	<form>
+	<table>
+		<tr>
+			<td>
+				<input type="text" name="searchTitle" id="searchTitle" value="{{searchTitle}}" />
+			</td>
+			<td>
+				<input type="submit" value="検索" />
+			</td>
+	</table>
+	{% for album in datas %}
+	<table border="1" >
+		<!--td><a href="/admin/album/allpicture?albumid={{album.key.id}}">アルバムの画像を見る</a></td-->
+		<!--td><a href="/admin/album/orderpicture?albumid={{album.key.id}}">アルバムを並び替える</a></td-->
+		<tr>
+			<td>{{album.title|escape}}</td>
+		</tr>
+		<tr>
+			<td><a href="/admin/album/slideshow?albumid={{album.key.id}}"><img src="/admin/picture/img/small?pictureid={{album.pictureid}}" /></a></td>
+		</tr>
+		<tr>
+			<td><a href="/admin/album/detail?albumid={{album.key.id}}">アルバム情報変更</a></td>
+		</tr>
+	</table>
+	{% endfor %}
+	<table>
+	<tr>
+		<td>
+			{% for i in pages %}
+				{% ifequal i page %}
+					{{ i }}
+				{% else %}
+					<a href="/admin/picture/list?page={{ i }}">{{ i }}</a>
+				{% endifequal %}
+			{% endfor %}
+		</td>
+	</tr>
+	</table>
+</body>
+
+
+
+</html>

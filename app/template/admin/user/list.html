@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+    <h1>管理のユーザー一覧表示ページです!</h1>
+    <table>
+        <tr>
+            <td>
+                <a href="/admin/user/insert">新規登録</a>
+            </td>
+            <td>
+                <a href="/admin">メニューに戻る</a>
+            </td>
+        </tr>
+    </table>
+    <table border="1">
+    <th>ユーザーID</th>
+    <th>名前</th>
+    <th>メールアドレス</th>
+    <th>ニックネーム</th>
+    {% for user in datas %}
+    <tr>
+        <td><a href="/admin/user/detail?userid={{user.key.id}}">{{user.key.id}}</a></td>
+        <td>{{user.name|escape}}</td>
+        <td>{{user.email|escape}}</td>
+        <td>{{user.nickname|escape}}</td>
+    </tr>
+    {% endfor %}
+    </table>
+
+</body>
+
+
+
+</html>

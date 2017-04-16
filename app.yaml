@@ -1,0 +1,35 @@
+application: make-view
+version: 1
+runtime: python
+api_version: 1
+
+handlers:
+- url: /js
+  static_dir: js
+- url: /css
+  static_dir: css
+- url: /images
+  static_dir: images
+- url: /user/(.*?)/(.*?)
+  script: main.py
+  login : required
+  secure: optional
+- url: /user/(.*?)
+  script: main.py
+  login : required
+  secure: optional
+- url: /user
+  script: main.py
+  login : required
+  secure: optional
+- url: /picture/.*
+  script: main.py
+  login : required
+  secure: optional
+- url: /index/.*
+  script: main.py
+  login : required
+  secure: optional
+- url: /.*
+  script: main.py
+  secure: never

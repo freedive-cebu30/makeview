@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<script type="text/javascript" src="../../../../js/jquery-1.3.2.min.js"></script>
+	<script type="text/javascript" src="../../../../js/jquery.validate.min.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+		    $("#userform").validate({
+		        rules : {
+		            name: {
+		                required: true
+		            },
+					nickname: {
+		                required: true
+		            },
+					age: {
+		                required: true,
+						digits  : true
+		            },
+					capital: {
+		                required: true,
+						digits  : true
+		            }
+		        },
+		        messages: {
+		            name: {
+		                required: "表示名は必須項目です"
+		            },
+					nickname: {
+		                required: "ニックネームは必須項目です"
+		            },
+					age: {
+		                required: "年齢は必須項目です",
+						digits  : "数字で入力して下さい"
+		            },
+					capital: {
+		                required: "資本金は必須項目です",
+						digits  : "数字で入力して下さい"
+		            }
+		        }
+		    });
+		});
+
+
+    </script>
+	 <style type="text/css">
+		label.error {
+	    color: red;
+	}
+	</style>
+</head>
+<body>
+	<h1>管理のユーザー登録ページです</h1>
+	<form id="userform" method="POST" action="/admin/user/updateend" >
+		<table>
+			<tr>
+				<td>表示名</td>
+				<td><input type="text" class="required" name="name" id="name" value="{{datas.name|escape}}" /></td>
+			</tr>
+			<tr>
+				<td>ニックネーム</td>
+				<td><input type="text" class="required" name="nickname" id="nickname" value="{{datas.nickname|escape}}" /></td>
+			</tr>
+			<tr>
+				<td>メール</td>
+				<td><input type="text" name="email" id="email" value="{{datas.email|escape}}" /></td>
+			</tr>
+			<tr>
+				<td>住所</td>
+				<td><input type="text" name="address" id="address" value="{{datas.address|escape}}" /></td>
+			</tr>
+			<tr>
+				<td>電話番号</td>
+				<td><input type="text" name="telFirst" value="{{datas.telFirst|escape}}" /></td>
+			</tr>
+			<tr>
+				<td>電話番号2</td>
+				<td><input type="text" name="telSecond" value="{{datas.telSecond|escape}}" /></td>
+			</tr>
+			<tr>
+				<td>電話番号3</td>
+				<td><input type="text" name="telThird" value="{{datas.telThird|escape}}" /></td>
+			</tr>
+			<tr>
+				<td>年齢</td>
+				<td><input type="text" class="required" name="age" value="{{datas.age|escape}}" /></td>
+			</tr>
+			<tr>
+				<td>性別</td>
+				<td>
+					<select name="sex">
+						<option value="1" {% ifequal datas.sex 1 %} selected="selected" {% endifequal %}>男</option>
+						<option value="2" {% ifequal datas.sex 2 %} selected="selected" {% endifequal %}>女</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td>代表者</td>
+				<td><input type="text" name="delegate" value="{{datas.delegate|escape}}" /></td>
+			</tr>
+			<tr>
+				<td>担当者</td>
+				<td><input type="text" name="chargePerson" value="{{datas.chargePerson|escape}}" /></td>
+			</tr>
+			<tr>
+				<td>資本金</td>
+				<td><input type="text" class="required" name="capital" value="{{datas.capital|escape}}" />万円</td>
+			</tr>
+			<tr>
+				<td>法人指定</td>
+				<td>
+					<select name="corporateFlg">
+						<option value="1" {% ifequal datas.corporateFlg 1 %} selected="selected" {% endifequal %} >個人</option>
+						<option value="2" {% ifequal datas.corporateFlg 2 %} selected="selected" {% endifequal %} >法人</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td>会社名</td>
+				<td><input type="text" name="corporate" value="{{datas.corporate|escape}}"></td>
+			</tr>
+			<tr>
+				<td>備考</td>
+				<td><textarea name="recital">{{datas.recital|escape}}</textarea></td>
+			</tr>
+			<tr>
+				<td>
+				<input type="submit" value="変更する" />
+				</td>
+			</tr>
+		</table>
+	</form>
+	<a href="/admin/user/list">一覧に戻る</a>
+
+</body>

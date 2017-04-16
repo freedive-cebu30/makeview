@@ -1,0 +1,185 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <script type="text/javascript" src="../../../../js/jquery-1.3.2.min.js"></script>
+    <script type="text/javascript" src="../../../../js/jquery.validate.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#userform").validate({
+                rules : {
+                    age: {
+                        digits  : true
+                    },
+                    capital: {
+                        digits  : true
+                    }
+                },
+                messages: {
+
+                    age: {
+                        digits  : "数字で入力して下さい"
+                    },
+                    capital: {
+                        digits  : "数字で入力して下さい"
+                    }
+                },
+                errorClass: "myError"
+            });
+        });
+    </script>
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+            font-size: 100%;
+        }
+        form{
+            padding          : 1em;
+            border           : 1px solid #bbb;
+            width            : 420px;
+            height           : 460px;
+            background-color : #f9f6f1;
+            margin-left      : 15px;
+            margin-top       : 10px;
+			font-size        : 12px;
+        }
+        fieldset{
+            border:none;
+        }
+        legend {
+            margin-bottom: 1em;
+            padding-left: 100px;
+            font-weight: bold;
+        }
+        /*input#title{
+            border: 1px solid #666;
+            border-bottom-color: #ccc;
+            border-right-color: #ccc;
+            width: 328px;
+            margin-bottom:10px;
+        }*/
+        textarea {
+            border: 1px solid #666;
+            border-bottom-color: #ccc;
+            border-right-color: #ccc;
+            width: 310px;
+            margin-bottom:10px;
+        }
+        p {
+            text-align: center;
+        }
+        label.myError {
+            color: red;
+        }
+        .user_update td{
+            /*border: 1px solid #848484;*/
+        }
+    </style>
+</head>
+<body>
+    <form id="userform" method="POST" action="/user/user/updateend" >
+        <table class="user_update">
+            <tr>
+                <td>表示名</td>
+                <td><input type="text" name="name" id="name" value="{{datas.name|escape}}" /></td>
+            </tr>
+            <tr>
+                <td>ニックネーム</td>
+                <td>{{datas.nickname|escape}}</td>
+            </tr>
+            <tr>
+                <td>メール</td>
+                <td>{{datas.email|escape}}</td>
+            </tr>
+            <tr>
+                <td>住所</td>
+                <td><input type="text" name="address" id="address" value="{{datas.address|escape}}" /></td>
+            </tr>
+            <tr>
+                <td>電話番号</td>
+                <td><input type="text" name="telFirst" value="{{datas.telFirst|escape}}" /></td>
+            </tr>
+            <tr>
+                <td>電話番号2</td>
+                <td><input type="text" name="telSecond" value="{{datas.telSecond|escape}}" /></td>
+            </tr>
+            <tr>
+                <td>電話番号3</td>
+                <td><input type="text" name="telThird" value="{{datas.telThird|escape}}" /></td>
+            </tr>
+            <tr>
+                <td>年齢</td>
+                <td>
+                    {% ifequal datas.age None %}
+                        <input type="text" name="age" value="" />
+                    {% else %}
+                        <input type="text" name="age" value="{{datas.age|escape}}" />
+                    {% endifequal %}
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <label for="age" class="myError" generated="true" /></label>
+                </td>
+            </tr>
+            <tr>
+                <td>性別</td>
+                <td>
+                    <select name="sex">
+                        <option value="3" {% ifequal datas.sex 3 %} selected="selected" {% endifequal %}>性別</option>
+                        <option value="1" {% ifequal datas.sex 1 %} selected="selected" {% endifequal %}>男</option>
+                        <option value="2" {% ifequal datas.sex 2 %} selected="selected" {% endifequal %}>女</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>代表者</td>
+                <td><input type="text" name="delegate" value="{{datas.delegate|escape}}" /></td>
+            </tr>
+            <tr>
+                <td>担当者</td>
+                <td><input type="text" name="chargePerson" value="{{datas.chargePerson|escape}}" /></td>
+            </tr>
+            <tr>
+                <td>資本金</td>
+                <td>
+                    {% ifequal datas.capital None %}
+                        <input type="text" name="capital" value="" />万円
+                    {% else %}
+                        <input type="text" name="capital" value="{{datas.capital|escape}}" />万円
+                    {% endifequal %}
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <label for="capital" class="myError" generated="true" /></label>
+                </td>
+            </tr>
+            <tr>
+                <td>法人指定</td>
+                <td>
+                    <select name="corporateFlg">
+                        <option value="1" {% ifequal datas.corporateFlg 1 %} selected="selected" {% endifequal %} >個人</option>
+                        <option value="2" {% ifequal datas.corporateFlg 2 %} selected="selected" {% endifequal %} >法人</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>会社名</td>
+                <td><input type="text" name="corporate" value="{{datas.corporate|escape}}"></td>
+            </tr>
+            <tr>
+                <td>備考</td>
+                <td><textarea name="recital" rows="7" cols="40">{{datas.recital|escape}}</textarea></td>
+            </tr>
+            <tr>
+                <td>
+                <input type="submit" value="変更する" />
+                </td>
+            </tr>
+        </table>
+    </form>
+</body>

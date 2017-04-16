@@ -1,0 +1,234 @@
+{% include "header.html" %}
+<link href='../../../css/basic.css' rel='stylesheet' type='text/css' media='screen' />
+<link href='../../../css/confirm.css' rel='stylesheet' type='text/css' media='screen' />
+<link href="../../../css/thickbox.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="http://maps.google.co.jp/maps/api/js?sensor=false"></script>
+<script type="text/javascript" src="../../../js/jquery.validate.min.js"></script>
+<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+<style type="text/css">
+    * {font-family:Verdana, Arial, Helvetica, sans-serif;
+    /*font-size:11px;*/ }
+    a:hover {background:#ffffff; text-decoration:none;} /*BG color is a must for IE6*/
+    a.tooltip span {display:none; padding:2px 3px; margin-left:8px; width:130px;}
+    a.tooltip:hover span{display:inline; position:absolute; border:1px solid #cccccc; background:#ffffff; color:#6c6c6c;}
+
+</style>
+</head>
+
+<body id="bodymain">
+
+<div id="container"><!--container-->
+
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<!-- header -->
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<div id="header">
+    <a name="top" id="top"></a>
+    <!--left-->
+    <div id="h_left">
+        <h1>
+            <a href="/index">
+                <img src="../../../images/id.jpg" alt="メイクビュー｜googlemap連動写真共有サービス" title="メイクビュー｜googlemap連動写真共有サービス" />
+            </a>
+        </h1>
+    </div>
+    <!--right-->
+    <div id="h_right">
+        {% ifequal loginFlg 1 %}
+            <a href="/user/album/list" style="text-decoration: none;">
+                <img src="../../../images/bt_mypage.jpg" alt="マイページ" title="マイページ" />
+            </a>
+            <a href="{{logout_link}}" style="text-decoration: none;">
+                <img src="../../../images/bt_logout.jpg" alt="ログアウト" title="ログアウト" />
+            </a>
+        {% else %}
+            <a href="{{user_top_link}}" style="text-decoration: none; margin-left:100px;">
+                <img src="../../../images/bt_login.jpg" alt="ログイン" title="ログイン" />
+            </a>
+        {% endifequal %}
+        <a href="https://www.google.com/accounts/NewAccount?hl=ja">
+            <img src="../../../images/bt_creatac.jpg" alt="googleアカウント作成" title="googleアカウント作成" />
+        </a>
+    </div>
+</div>
+
+
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<!-- serch -->
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<div id="serch">
+    <div id="serch_in">
+        <form method="GET" action="/indexsearch">
+            <!--input-->
+            <input type="text" name="searchValue" id="searchValue" value="{{searchValue|escape}}" size="30" />
+            <!--県名-->
+            <select name="prefecture" id="prefecture" class="prefecture" >
+                <option value="" class="br" selected="selected">都道府県名</option>
+                {% for preVal in PreDatas %}
+                    <option {% ifequal preVal.prefecture_name prefecture %}selected="selected"{% endifequal %} {% ifequal preVal.prefecture_number 1 %}class="br"{% endifequal %} {% ifequal preVal.prefecture_number 7 %}class="br"{% endifequal %}{% ifequal preVal.prefecture_number 14 %}class="br"{% endifequal %} {% ifequal preVal.prefecture_number 17 %}class="br"{% endifequal %} {% ifequal preVal.prefecture_number 20 %}class="br"{% endifequal %} {% ifequal preVal.prefecture_number 24 %}class="br"{% endifequal %} {% ifequal preVal.prefecture_number 30 %}class="br"{% endifequal %} {% ifequal preVal.prefecture_number 39 %}class="br"{% endifequal %} value="{{preVal.prefecture_name}}">{{preVal.prefecture_name}}</option>
+                {% endfor%}
+            </select>
+            <!--路線名-->
+            <select class="line" name="line" id="line" >
+                {% if lineDatas|length_is:0 %}
+                    <option value="" class="br" selected="selected">路線名</option>
+                {% else %}
+                        <option value="" class="br" selected="selected">路線名</option>
+                    {% for lineVal in lineDatas %}
+                        <option value="{{lineVal}}" {% if forloop.counter|divisibleby:"4" %}class="br"{% endif %}{% ifequal lineVal line %} selected="selected" {% endifequal %}>{{lineVal}}</option>
+                    {% endfor%}
+                {% endif %}
+            </select>
+            <!--駅名-->
+            <select class="station" name="station" id="station">
+                {% if StationDatas|length_is:0 %}
+                    <option value="" class="br" selected="selected">駅名</option>
+                {% else %}
+                        <option value="" class="br" selected="selected">駅名</option>
+                    {% for stationVal in StationDatas %}
+                        <option value="{{stationVal}}" {% if forloop.counter|divisibleby:"4" %}class="br"{% endif %} {% ifequal stationVal station %} selected="selected" {% endifequal %}>{{stationVal}}</option>
+                    {% endfor%}
+                {% endif %}
+            </select>
+            <!--ボタン-->
+            <input type="hidden" name="searchflg" value="1" />
+            <input type="submit" value="検　索" id="bt_serch">&nbsp;&nbsp;
+        </form>
+    </div>
+</div>
+
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<!-- main_wrap -->
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<div id="main_wrap" class="clearfix"><!--main-->
+
+<!--comment:::::::::::::::::::::::-->
+<div id="top_left">
+<img src="../../../images/top_txt.jpg" alt="メイクビューはgooglemapに連動することで、地域や詳細な場所を特定した写真がアップできるサービスです。
+ストリートビューでは見つけられない場所の写真もあるかも？" />
+</div>
+<div id="top_right"><a href="/aboutsite"><img src="../../../images/bt_about.jpg" alt="もっと詳しく" /></a></div>
+
+<!--list:::::::::::::::::::::::-->
+<div id="recent_list"><!--list-->
+<!--p id="recent_p">人気画像　｜　週間　｜　月間　｜　年間</p-->
+<p id="recent_p"></p>
+
+<!--list01-->
+{% for album in datas %}
+    <div class="recent_part">
+        <p class="list_pict">
+            <a href="/slideshow?albumid={{album.key.id}}" class="tooltip">
+                <img src="/admin/picture/img/small?pictureid={{album.pictureid}}" />
+                <span>{{album.title}}</span>
+            </a>
+        </p>
+        <p class="list_title">
+            <a href="/slideshow?albumid={{album.key.id}}" class="tooltip" >{{album.subtitle}}<span>{{album.title}}</span></a>
+        </p>
+        <p class="list_comment"><a href="/slideshow?albumid={{album.key.id}}" class="tooltip">{{album.subrecital}}<span>{{album.recital}}</span></a></p>
+        <p class="list_user"><a href="">{{album.user.nickname}}</a></p>
+    </div>
+    {% if forloop.counter|divisibleby:"5" %}
+        <br class="clearboth" />
+    {% else %}
+        {% if forloop.last %}
+            <br class="clearboth" />
+        {% endif %}
+    {% endif %}
+{% endfor %}
+<!--/list01-->
+</div><!--/list-->
+{% ifequal pagerFlg 1 %}
+    <ul class="pager" style="margin-left:350px;">
+        {% ifnotequal page 1 %}
+            <li class="prev">
+                <a href="/indexsearch?page={{ prev }}">&laquo; 前へ</a>
+            </li>
+        {% endifnotequal %}
+            {% for i in pages %}
+                {% ifequal forloop.counter 1 %}
+                    {% ifequal i page %}
+                        <li>
+                            {{ i }}
+                        </li>
+                    {% else %}
+                        <li>
+                            <a href="/indexsearch?page={{ i }}">{{ i }}</a>
+                        </li>
+                    {% endifequal %}
+                {% endifequal %}
+                {% ifequal forloop.counter 2 %}
+                    {% ifequal i page %}
+                        <li>
+                            {{ i }}
+                        </li>
+                    {% else %}
+                        <li>
+                            <a href="/indexsearch?page={{ i }}">{{ i }}</a>
+                        </li>
+                    {% endifequal %}
+                {% endifequal %}
+                {% ifequal forloop.counter 3 %}
+                    {% ifequal i page %}
+                        <li>
+                            {{ i }}
+                        </li>
+                    {% else %}
+                        <li>
+                            <a href="/indexsearch?page={{ i }}">{{ i }}</a>
+                        </li>
+                    {% endifequal %}
+                {% endifequal %}
+                {% ifequal forloop.counter 4 %}
+                    {% ifequal i page %}
+                        <li>
+                            {{ i }}
+                        </li>
+                    {% else %}
+                        <li>
+                            <a href="/indexsearch?page={{ i }}">{{ i }}</a>
+                        </li>
+                    {% endifequal %}
+                {% endifequal %}
+                {% ifequal forloop.counter 5 %}
+                    {% ifequal i page %}
+                        <li>
+                            {{ i }}
+                        </li>
+                    {% else %}
+                        <li>
+                            <a href="/indexsearch?page={{ i }}">{{ i }}</a>
+                        </li>
+                    {% endifequal %}
+                {% endifequal %}
+                {% ifequal forloop.counter 6 %}
+                    {% ifequal i page %}
+                        <li>
+                            {{ i }}
+                        </li>
+                    {% else %}
+                        <li>
+                            <a href="/indexsearch?page={{ i }}">{{ i }}</a>
+                        </li>
+                    {% endifequal %}
+                {% endifequal %}
+            {% endfor %}
+        {% ifnotequal page lastpage %}
+            <li class="next">
+                <a href="/indexsearch?page={{ next }}">次へ &raquo;</a>
+            </li>
+        {% endifnotequal %}
+    </ul>
+{% endifequal %}
+<!--map:::::::::::::::::::::::-->
+</div><!--/main_wrap-->
+</div><!--/container-->
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<!-- footer -->
+{% include "footer.html" %}
+<!-- analytics -->
+{% include "analytics.html" %}
+<!-- /analytics -->
+</body>
+</html>

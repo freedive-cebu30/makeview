@@ -1,0 +1,191 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<script type="text/javascript" src="../../../../js/jquery-1.3.2.min.js"></script>
+	<script type="text/javascript" src="../../../../js/jquery.validate.min.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+		    $("#userform").validate({
+		        rules : {
+		            name: {
+		                required: true
+		            },
+					nickname: {
+		                required: true
+		            },
+					age: {
+		                required: true,
+						digits  : true
+		            },
+					capital: {
+		                required: true,
+						digits  : true
+		            }
+		        },
+		        messages: {
+		            name: {
+		                required: "表示名は必須項目です"
+		            },
+					nickname: {
+		                required: "ニックネームは必須項目です"
+		            },
+					age: {
+		                required: "年齢は必須項目です",
+						digits  : "数字で入力して下さい"
+		            },
+					capital: {
+		                required: "資本金は必須項目です",
+						digits  : "数字で入力して下さい"
+		            }
+		        }
+		    });
+		});
+
+
+    </script>
+	<script type="text/javascript">
+		var timeId=null;
+		$("#postCode").live("keyup",function(event){
+
+			//var postCode = $("#postCode");
+			var postCode = document.getElementById("postCode");
+			var checkVal = isNaN(postCode.value);
+
+			if(checkVal){
+				alert("数字を入力して下さい");
+				postCode.value = "";
+				return ;
+			}
+
+			if(!isNaN(jQuery.data(postCode))){
+				if(timeId != null){
+					clearTimeout(timeId);
+				}
+
+				timeId = setTimeout("searchdb()", 600);
+
+
+			}
+
+		})
+
+		function searchdb(){
+			var postCode = document.getElementById("postCode");
+			var data = 'postCode='+postCode.value;
+			var url = '/admin/user/getaddress';
+
+			$.get(url, data, function(status){
+
+				var rex = new RegExp("({)", "i");
+				status.match(rex);
+				data1 = RegExp.rightContext;
+				var rex2 = new RegExp("(})", "i");
+				data1.match(rex2);
+				data2 = RegExp.leftContext;
+
+				var address = document.getElementById("address");
+				address.value=data2;
+
+			})
+		}
+
+	</script>
+
+	 <style type="text/css">
+		label.error {
+	    color: red;
+	}
+	</style>
+</head>
+<body>
+	<h1>管理のユーザー登録ページです</h1>
+	<form id="userform" method="POST" action="/admin/user/insertend" >
+		<table>
+			<tr>
+				<td>表示名</td>
+				<td><input type="text" class="required" name="name" id="name" /></td>
+			</tr>
+			<tr>
+				<td>ニックネーム</td>
+				<td><input type="text" class="required" name="nickname" id="nickname" /></td>
+			</tr>
+			<tr>
+				<td>メール</td>
+				<td><input type="text" name="email" id="email" /></td>
+			</tr>
+			<tr>
+				<td>年齢</td>
+				<td><input type="text" class="required" name="age"></td>
+			</tr>
+			<tr>
+				<td>性別</td>
+				<td>
+					<input type="radio" name="sex" value="1" checked>男
+					<input type="radio" name="sex" value="2">女
+				</td>
+			</tr>
+			<tr>
+				<td>郵便番号</td>
+				<td><input type="text" name="postCode" id="postCode"></td>
+			</tr>
+			<tr>
+				<td>住所</td>
+				<td><input type="text" name="address" id="address" /></td>
+			</tr>
+			<tr>
+				<td>電話番号</td>
+				<td><input type="text" name="telFirst"></td>
+			</tr>
+			<tr>
+				<td>電話番号2</td>
+				<td><input type="text" name="telSecond"></td>
+			</tr>
+			<tr>
+				<td>電話番号3</td>
+				<td><input type="text" name="telThird"></td>
+			</tr>
+			<tr>
+				<td>法人指定</td>
+				<td>
+					<input type="radio" name="corporateFlg" value="1" checked>個人
+					<input type="radio" name="corporateFlg" value="2">法人
+				</td>
+			</tr>
+			<tr>
+				<td>会社名</td>
+				<td><input type="text" name="corporate"></td>
+			</tr>
+			<tr>
+				<td>代表者</td>
+				<td><input type="text" name="delegate"></td>
+			</tr>
+			<tr>
+				<td>担当者</td>
+				<td><input type="text" name="chargePerson"></td>
+			</tr>
+			<tr>
+				<td>資本金</td>
+				<td><input type="text" class="required" name="capital">万円</td>
+			</tr>
+			<tr>
+				<td>グーグルマップに住所を公開しますか？</td>
+				<td>
+					<input type="radio" name="mapflg" value="1" checked>いいえ
+					<input type="radio" name="mapflg" value="2">はい
+				</td>
+			</tr>
+			<tr>
+				<td>備考</td>
+				<td><textarea name="recital"></textarea></td>
+			</tr>
+			<tr>
+				<td>
+				<input type="submit" value="登録する" />
+				</td>
+			</tr>
+		</table>
+	</form>
+	<a href="/admin/user/list">一覧に戻る</a>
+
+</body>

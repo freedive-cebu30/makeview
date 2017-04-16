@@ -1,0 +1,425 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+	<script type="text/javascript" src="http://maps.google.co.jp/maps/api/js?sensor=false"></script>
+	<script type="text/javascript" src="../../../../js/jquery-1.3.2.min.js"></script>
+	<script type="text/javascript" src="../../../../js/jquery.validate.min.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+		    $("#albumform").validate({
+		        rules : {
+		            title: {
+		                required: true,
+						maxlength: 20
+		            },
+					address: {
+		                required: true,
+						maxlength: 30
+		            },
+					tag: {
+						maxlength: 140
+		            },
+					recital: {
+						maxlength: 140
+		            }
+		        },
+		        messages: {
+		            title: {
+		                required: "タイトルは必須項目です",
+						maxlength: "タイトルは20文字までにして下さい"
+		            },
+					address: {
+		                required: "住所は必須項目です",
+						maxlength: "住所は40文字までにして下さい"
+		            },
+					tag: {
+						maxlength: "キーワードは140文字までにして下さい"
+		            },
+					recital: {
+						maxlength: "備考は140文字までにして下さい"
+		            }
+		        },
+				errorClass: "myError"
+		    });
+		});
+    </script>
+	<style type="text/css">
+		label.myError {
+	    color: red;
+		}
+	</style>
+	<script type="text/javascript">
+		var timeId=null;
+		$("#postCode").live("keyup",function(event){
+
+			var postCode = document.getElementById("postCode");
+			var checkVal = isNaN(postCode.value);
+
+			if(checkVal){
+				alert("数字を入力して下さい");
+				postCode.value = "";
+				return ;
+			}
+
+			if(!isNaN(jQuery.data(postCode))){
+				if(timeId != null){
+					clearTimeout(timeId);
+				}
+
+				timeId = setTimeout("searchdb()", 1500);
+
+			}
+
+		})
+
+		function searchdb(){
+			var postCode = document.getElementById("postCode");
+			var data = 'postCode='+postCode.value;
+			var url = '/admin/album/getaddress';
+
+			$.get(url, data, function(status){
+
+				var rex = new RegExp("({)", "i");
+				status.match(rex);
+				data1 = RegExp.rightContext;
+				var rex2 = new RegExp("(})", "i");
+				data1.match(rex2);
+				data2 = RegExp.leftContext;
+
+				var address = document.getElementById("address");
+				address.value=data2;
+				var request = {
+					address: data2
+				};
+				//getStation
+				var geocoder = new google.maps.Geocoder();
+				geocoder.geocode(request, getStation);
+
+			})
+		}
+
+		function getStation(results, status){
+			if(status == google.maps.GeocoderStatus.OK){
+				var data = results[0].geometry.location;
+				var x = data.c;
+				var y = data.b;
+				setStation(data, x, y);
+			}
+		}
+
+		function setStation(data, x, y){
+
+			var longitude = document.getElementById("longitude");
+			longitude.value = x;
+			var latitude = document.getElementById("latitude");
+			latitude.value = y;
+
+			$.ajax({
+				  url : 'http://express.heartrails.com/api/json?method=getStations&x='+x+'&y='+y,
+				  data : {
+				    format : 'jsonp'
+				  },
+				  dataType : 'jsonp',
+				  jsonp : 'jsonp',
+				  complete : function(){
+				  },
+				  success : function(data){
+				  	datas = data.response.station[0].line+data.response.station[0].name;
+				  	var station = document.getElementById('station');
+					station.value=datas;
+
+				  },
+				  beforeSend : function(){
+
+				  },
+				  error : function(){
+				  }
+				});
+
+		}
+	</script>
+	<script type="text/javascript">
+		var map_canvas;
+		var infoWnd;
+		function initialize(){
+
+			var initPos = new google.maps.LatLng(35.689488, 139.691706);
+			var mapOptions = {
+				center : initPos,
+				zoom : 17,
+				scrollwheel: false,
+				mapTypeId : google.maps.MapTypeId.ROADMAP
+			};
+			var mapId = document.getElementById("map_canvas");
+			map_canvas = new google.maps.Map(mapId, mapOptions);
+
+			var query = {
+				latLng : initPos
+			}
+
+			var geocoder = new google.maps.Geocoder();
+			infoWnd = new google.maps.InfoWindow();
+			infoWnd.open(map_canvas);
+
+			clickMapSet();
+
+		}
+
+		//if user click get post_code and get address
+		function clickMapSet(){
+			google.maps.event.addListener(map_canvas, "click", function(results, status){
+
+				setStation(results.latLng, results.latLng.c, results.latLng.b);
+				var position = new google.maps.LatLng(results.latLng.b, results.latLng.c );
+				var query = {latLng : position}
+				var geocoder = new google.maps.Geocoder();
+				geocoder.geocode(query, procGeocodeCallback2);
+			});
+		}
+
+		function procGeocodeCallback2(results, status){
+
+			if (status == google.maps.GeocoderStatus.OK) {
+				var data = results[0].formatted_address;
+				var rex = new RegExp("(,)", "i");
+				var address = document.getElementById("address");
+				data.match(rex);
+				dataAddress = RegExp.rightContext;
+				dataAddress = dataAddress.replace(/ /, "");
+				address.value = dataAddress;
+
+				var data1 = results[1].formatted_address;
+
+				var postCode = document.getElementById("postCode");
+				var rex2 = new RegExp("(〒)", "i");
+				postCode2 = "";
+				data1.match(rex2);
+				datapostCode = RegExp.rightContext;
+				var postCode2 = datapostCode.replace(/-/, "");
+				postCode2 = postCode2.match(/[0-9]+/);
+                post = "";
+				post = new String(postCode2);
+				if(post.length > 6){
+
+					postCode.value = post;
+				}else{
+					postCode.value = "";
+				}
+
+
+
+			}
+
+		}
+
+	</script>
+	<script type="text/javascript">
+		var timeId=null;
+		$("#startPostCode").live("keyup",function(event){
+
+			var postCode = document.getElementById("startPostCode");
+			var checkVal = isNaN(postCode.value);
+
+			if(checkVal){
+				alert("数字を入力して下さい");
+				postCode.value = "";
+				return ;
+			}
+
+			if(!isNaN(jQuery.data(postCode))){
+				if(timeId != null){
+					clearTimeout(timeId);
+				}
+
+				timeId = setTimeout("searchdb2()", 1500);
+
+			}
+
+		})
+
+        //startpoint
+		function searchdb2(){
+			var postCode = document.getElementById("startPostCode");
+			var data = 'postCode='+postCode.value;
+			var url = '/admin/album/getaddress';
+
+			$.get(url, data, function(status){
+
+				var rex = new RegExp("({)", "i");
+				status.match(rex);
+				data1 = RegExp.rightContext;
+				var rex2 = new RegExp("(})", "i");
+				data1.match(rex2);
+				data2 = RegExp.leftContext;
+
+				var address = document.getElementById("startAddress");
+				address.value=data2;
+
+			})
+		}
+	</script>
+    <script type="text/javascript">
+		function setMap(){
+			var mapId = document.getElementById("map_canvas");
+			map_canvas = new google.maps.Map(mapId);
+			var point = document.getElementById("point");
+			var query = {
+				address : point.value
+			}
+			var geocoder = new google.maps.Geocoder();
+			infoWnd = new google.maps.InfoWindow()
+			geocoder.geocode(query, procGeocodeCallback);
+
+		}
+
+		function procGeocodeCallback(results, status){
+
+			if(status == google.maps.GeocoderStatus.OK){
+				var initPos = new google.maps.LatLng(results[0].geometry.location.b, results[0].geometry.location.c);
+				var mapOptions = {
+					center : initPos,
+					zoom : 17,
+					scrollwheel: false,
+					mapTypeId : google.maps.MapTypeId.ROADMAP
+				};
+				var mapId = document.getElementById("map_canvas");
+				map_canvas = new google.maps.Map(mapId, mapOptions);
+				infoWnd.open(map_canvas);
+				clickMapSet();
+			}else{
+				alert("検索キーワードを変更して下さい");
+				var initPos = new google.maps.LatLng(35.689488, 139.691706);
+				var mapOptions = {
+					center : initPos,
+					zoom : 17,
+					mapTypeId : google.maps.MapTypeId.ROADMAP
+				};
+				var mapId = document.getElementById("map_canvas");
+				map_canvas = new google.maps.Map(mapId, mapOptions);
+
+				var query = {
+					latLng : initPos
+				}
+
+				var geocoder = new google.maps.Geocoder();
+				infoWnd = new google.maps.InfoWindow();
+				infoWnd.open(map_canvas);
+
+				clickMapSet();
+			}
+
+		}
+
+	</script>
+</head>
+<body onload="initialize()">
+	<h1>管理のアルバム登録ページです</h1>
+	<a href="/admin/album/list">一覧に戻る</a>
+	<form id="albumform" method="POST" action="/admin/album/insertend" >
+		<table>
+			<tr>
+				<td>タイトル・目的地</td>
+				<td><input type="text" class="required" name="title" size="50" /></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td><label for="title" class="myError" generated="true" /></td>
+			</tr>
+			<tr>
+				<td>郵便番号</td>
+				<td><input type="text" name="postCode" id="postCode" /></td>
+			</tr>
+			<tr>
+				<td>住所</td>
+				<td><input type="text" class="required" name="address" id="address" size="50" /></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td><label for="address" class="myError" generated="true" /></td>
+			</tr>
+			<tr>
+				<td>最寄り駅</td>
+				<td>
+					<input type="text" name="station" id="station" size="40" />
+				</td>
+			</tr>
+			<tr>
+				<td>最寄りのバス停</td>
+				<td>
+					<input type="text" name="busStop" id="busStop" />
+				</td>
+			</tr>
+			<tr>
+				<td>スタート地点</td>
+				<td><input type="text" name="start"></td>
+			</tr>
+			<tr>
+				<td>郵便番号</td>
+				<td><input type="text" name="startPostCode" id="startPostCode"></td>
+			</tr>
+			<tr>
+				<td>住所</td>
+				<td><input type="text" name="startAddress" id="startAddress" /></td>
+			</tr>
+			<tr>
+				<td>目的地までの所要時間</td>
+				<td><input type="text" name="time" id="time" /></td>
+			</tr>
+			<tr>
+				<td>キーワード</td>
+				<td><input type="text" name="tag" size="100" /></td>
+				<td>入力例[大阪][学校]</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td><label for="tag" class="myError" generated="true" /></td>
+			</tr>
+			<tr>
+				<td>撮影時間帯</td>
+				<td>
+					<select name="timezone">
+						<option value="1" selected="selected">その他</option>
+						<option value="2">朝</option>
+						<option value="3">昼</option>
+						<option value="4">夕方</option>
+						<option value="5">夜</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td>季節</td>
+				<td>
+					<select name="season">
+						<option value="1" selected="selected">その他</option>
+						<option value="2">春</option>
+						<option value="3">夏</option>
+						<option value="4">秋</option>
+						<option value="5">冬</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td>備考</td>
+				<td><textarea name="recital" id="recital" style="width:300px;height:100px;"></textarea></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td><label for="recital" class="myError" generated="true" /></td>
+			</tr>
+			<tr>
+				<td>
+				<input type="submit" value="登録" />
+				<input type="hidden" name="latitude" id="latitude" />
+				<input type="hidden" name="longitude" id="longitude" />
+				</td>
+			</tr>
+		</table>
+	</form>
+	<input type="button" value="移動する" onclick="javascript:setMap()" />
+	<input type="text" id="point" />
+	<div id="map_canvas" style="width: 400px; height: 400px"></div>
+
+
+</body>

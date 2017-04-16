@@ -1,0 +1,17 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+	登録が完了しました
+	<a href="/admin/picture/list">一覧に戻る</a>
+	{% for picture in datas %}
+	<tr>
+		<td><a href="/admin/picture/detail?id={{picture.key.id}}">{{picture.key.id}}</a></td>
+		<td>{{picture.name|escape}}</td>
+	</tr>
+	{% endfor %}
+</body>
+
+</html>

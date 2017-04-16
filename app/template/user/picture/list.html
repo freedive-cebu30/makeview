@@ -1,0 +1,251 @@
+{% include "../headerlow.html" %}
+<link href='../../../../css/zoombox.css' rel='stylesheet' type='text/css' />
+<script type="text/javascript" src="../../../../js/zoombox.js"></script>
+<script type="text/javascript">
+    $(function() {
+      zoombox.init();
+    });
+</script>
+<script type="text/javascript">
+    function formSubmit(formId, action){
+        var list = new Array({{ datas|length }});
+        submitFlg = false;
+        for(var i = 0; i < list.length; i++){
+            var pictureId = document.getElementById("pictureid"+i);
+            if (pictureId.checked) {
+                submitFlg = true;
+                break;
+            }
+        }
+        if(submitFlg){
+            var changeForm = document.getElementById(formId);
+            changeForm.action = action;
+            changeForm.submit();
+        }else{
+            alert("チェックしてからボタンを押して下さい");
+        }
+    }
+
+	function formSubmit3(formId, action){
+        var list = new Array({{ datas|length }});
+        submitFlg = false;
+        for(var i = 0; i < list.length; i++){
+            var pictureId = document.getElementById("pictureid"+i);
+            if (pictureId.checked) {
+                submitFlg = true;
+                break;
+            }
+        }
+        if(submitFlg){
+			if(confirm("削除してもよろしいですか？")){
+				var changeForm = document.getElementById(formId);
+	            changeForm.action = action;
+	            changeForm.submit();
+			}
+
+        }else{
+            alert("チェックしてからボタンを押して下さい");
+        }
+    }
+    function setCheck(labId, picId){
+        var labelId   = "";
+        var pictureId = "";
+
+        labelId = document.getElementById(labId);
+
+        if(labelId.value !=""){
+            pictureId = document.getElementById(picId);
+            pictureId.checked = true;
+        }
+    }
+
+	function formSubmit2(formId, action){
+
+        var changeForm = document.getElementById(formId);
+        changeForm.action = action;
+        changeForm.submit();
+    }
+</script>
+</head>
+
+<body id="bodymain">
+<div id="container"><!--container-->
+
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<!-- headerdetail -->
+{% include "../headerdetail.html" %}
+<!-- /headerdetail -->
+<!-- main_wrap -->
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<div id="main_wrap" class="clearfix"><!--main-->
+
+<!-- main -->
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<div id="login_main">
+
+<h2 id="h2_title">画像一覧</h2>
+<form method="GET" action="/user/picture/list" id="del" >
+<input type="hidden" name="delFlg" value="1" />
+</form>
+<form method="GET" action="/user/picture/list" id="change" >
+    <div id="login_header" class="clearfix">
+        <div id="div_new">
+            <ul>
+                <li>
+                    <span>サムネイルをクリックすると、拡大画像が表示されます。</span>
+                </li>
+                <li>
+                    <span>ラベルは10文字まで入力できます。</span>
+                </li>
+            </ul>
+        </div>
+        <div id="login_serch">
+            <input type="text" name="searchLabel" id="searchLabel" size="20" value="{{searchLabel}}" />
+            <input type="submit" title="ラベル検索です" value="　検　索　" />&nbsp;&nbsp;
+			<input type="button" title="検索条件をクリア" value="ク　リ　ア" onClick="javascript:formSubmit2('del', '/user/picture/list');" />
+        </div>
+        <br class="clearboth" />
+    </div>
+</form>
+<div id="list_pictureremove">
+<!--h3><a href="">画像アップロード</a>｜画像一覧</h3-->
+<form method="POST" action="" id="main" />
+<table>
+{% for picture in datas %}
+    {% if forloop.counter0|divisibleby:"4" %}
+            <tr>
+    {% endif %}
+            <td>
+                {% ifequal picture.label None %}
+                <h4>　</h4>
+                {% else %}
+                    {% ifequal picture.label "" %}
+                    <h4>　</h4>
+                    {% else %}
+                    <h4>{{picture.label}}</h4>
+                    {% endifequal %}
+                {% endifequal %}
+                <a href="/picture/img/big?pictureid={{picture.key.id}}" rel="zoombox[gallery]" >
+                    <img src="/picture/img/small?pictureid={{picture.key.id}}" />
+                </a>
+                <br />
+                <input type="checkbox" name="pictureid" id="pictureid{{ forloop.counter0 }}" value="{{picture.key.id}}" />
+                <label id="check_pict" for="pictureid{{ forloop.counter0 }}" >&nbsp;画像の削除</label><br />
+                <input type="text" tabindex="{{ forloop.counter }}" value="" name="label{{picture.key.id}}" id="label{{picture.key.id}}" maxlength="10" onChange='javascript:setCheck("label{{picture.key.id}}", "pictureid{{ forloop.counter0 }}")' style="width: 110px;" />
+            </td>
+    {% if forloop.last %}
+            </tr>
+    {% else %}
+        {% if forloop.counter|divisibleby:"4" %}
+            </tr>
+        {% endif %}
+    {% endif %}
+{% endfor %}
+</table>
+<br class="clearboth" />
+
+{% ifequal pagerFlg 1 %}
+    <ul class="pager" style="margin-left:95px;">
+        {% ifnotequal page 1 %}
+            <li class="prev">
+                <a href="/user/picture/list?picturHandlerePage={{ prev }}">&laquo; 前へ</a>
+            </li>
+        {% endifnotequal %}
+            {% for i in pages %}
+                {% ifequal forloop.counter 1 %}
+                    {% ifequal i page %}
+                        <li>
+                            {{ i }}
+                        </li>
+                    {% else %}
+                        <li>
+                            <a href="/user/picture/list?picturHandlerePage={{ i }}">{{ i }}</a>
+                        </li>
+                    {% endifequal %}
+                {% endifequal %}
+                {% ifequal forloop.counter 2 %}
+                    {% ifequal i page %}
+                        <li>
+                            {{ i }}
+                        </li>
+                    {% else %}
+                        <li>
+                            <a href="/user/picture/list?picturHandlerePage={{ i }}">{{ i }}</a>
+                        </li>
+                    {% endifequal %}
+                {% endifequal %}
+                {% ifequal forloop.counter 3 %}
+                    {% ifequal i page %}
+                        <li>
+                            {{ i }}
+                        </li>
+                    {% else %}
+                        <li>
+                            <a href="/user/picture/list?picturHandlerePage={{ i }}">{{ i }}</a>
+                        </li>
+                    {% endifequal %}
+                {% endifequal %}
+                {% ifequal forloop.counter 4 %}
+                    {% ifequal i page %}
+                        <li>
+                            {{ i }}
+                        </li>
+                    {% else %}
+                        <li>
+                            <a href="/user/picture/list?picturHandlerePage={{ i }}">{{ i }}</a>
+                        </li>
+                    {% endifequal %}
+                {% endifequal %}
+                {% ifequal forloop.counter 5 %}
+                    {% ifequal i page %}
+                        <li>
+                            {{ i }}
+                        </li>
+                    {% else %}
+                        <li>
+                            <a href="/user/picture/list?picturHandlerePage={{ i }}">{{ i }}</a>
+                        </li>
+                    {% endifequal %}
+                {% endifequal %}
+                {% ifequal forloop.counter 6 %}
+                    {% ifequal i page %}
+                        <li>
+                            {{ i }}
+                        </li>
+                    {% else %}
+                        <li>
+                            <a href="/user/picture/list?picturHandlerePage={{ i }}">{{ i }}</a>
+                        </li>
+                    {% endifequal %}
+                {% endifequal %}
+            {% endfor %}
+        {% ifnotequal page lastpage %}
+            <li class="next">
+                <a href="/user/picture/list?picturHandlerePage={{ next }}">次へ &raquo;</a>
+            </li>
+        {% endifnotequal %}
+    </ul>
+{% endifequal %}
+<br /><br />
+<p class="a_center">
+    <input type="button" title="チェックしたラベルを変更します" value="ラベルを変更する" onClick="javascript:formSubmit('main', '/user/picture/updateend');" />&nbsp;&nbsp;
+    <input type="button" title="画像を削除します" value="　画像削除　" onClick="javascript:formSubmit3('main', '/user/picture/deleteend');return false;" />
+    <input type="hidden" name="picturHandlerePage" value="{{page}}" />
+</p>
+<form>
+</div><!--//div_alubm_thum-->
+</div><!--/main-->
+
+<!-- navi -->
+{% include "../navi.html" %}
+<!-- /navi -->
+</div><!--/main_wrap-->
+</div><!--/container-->
+<!-- footer -->
+{% include "../footer.html" %}
+<!--/footer-->
+<!-- analytics -->
+{% include "../analytics.html" %}
+<!-- /analytics -->
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+	<h1>管理のアルバムの削除確認ページです</h1>
+	<table>
+		<form method="POST" action="/admin/album/deleteend">
+			<tr>
+				<td>タイトル</td>
+				<td>{{datas.title|escape}}</td>
+			</tr>
+			<tr>
+				<td>郵便番号</td>
+				<td>{{datas.post_code|escape}}</td>
+			</tr>
+			<tr>
+				<td>住所</td>
+				<td>{{datas.address|escape}}</td>
+			</tr>
+			<tr>
+				<td>最寄り駅</td>
+				<td>{{datas.station|escape}}</td>
+			</tr>
+			<tr>
+				<td>最寄りのバス停</td>
+				<td>{{datas.bus_stop|escape}}</td>
+			</tr>
+			<tr>
+				<td>スタート地点</td>
+				<td>{{datas.start|escape}}</td>
+			</tr>
+			<tr>
+				<td>郵便番号</td>
+				<td>{{datas.start_post_code|escape}}</td>
+			</tr>
+			<tr>
+				<td>住所</td>
+				<td>{{datas.start_address|escape}}</td>
+			</tr>
+			<tr>
+				<td>目的地までの所要時間</td>
+				<td>{{datas.time|escape}}</td>
+			</tr>
+			<tr>
+				<td>キーワード</td>
+				{% for tag in datas.tag %}
+					<td>{{tag|escape}}</td>
+				{% endfor %}
+			</tr>
+			<tr>
+				<td>時間帯</td>
+				<td>
+					{% ifequal datas.timezone 1 %}
+						その他
+					{% endifequal %}
+					{% ifequal datas.timezone 2 %}
+						朝
+					{% endifequal %}
+					{% ifequal datas.timezone 3 %}
+						昼
+					{% endifequal %}
+					{% ifequal datas.timezone 4 %}
+						夕方
+					{% endifequal %}
+					{% ifequal datas.timezone 5 %}
+						夜
+					{% endifequal %}
+				</td>
+			</tr>
+			<tr>
+				<td>季節</td>
+				<td>
+					{% ifequal datas.season 1 %}
+						その他
+					{% endifequal %}
+					{% ifequal datas.season 2 %}
+						春
+					{% endifequal %}
+					{% ifequal datas.season 3 %}
+						夏
+					{% endifequal %}
+					{% ifequal datas.season 4 %}
+						秋
+					{% endifequal %}
+					{% ifequal datas.season 5 %}
+						冬
+					{% endifequal %}
+				</td>
+			</tr>
+			<tr>
+				<td>備考</td>
+				<td>{{datas.recital|escape}}</td>
+			</tr>
+			<tr>
+				<td>
+				<input type="submit" value="削除" />
+				</td>
+			</tr>
+			<input type="hidden" name="albumid" value="{{datas.key.id}}" />
+		</form>
+	</table>
+	<a href="/admin/album/list">一覧に戻る</a>
+
+</body>

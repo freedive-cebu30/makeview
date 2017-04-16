@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<link rel="stylesheet" href="../../../../css/main.css" type="text/css" />
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.3/jquery.min.js" type="text/javascript"></script>
+	<script type="text/javascript" src="../../../../js/jquery.dimensions.js"></script>
+	<script type="text/javascript" src="../../../../js/ui.mouse.js"></script>
+	<script type="text/javascript" src="../../../../js/ui.sortable.js"></script>
+	<script type="text/javascript">
+		jQuery.noConflict(); //他のライブラリとの衝突を回避します
+
+	jQuery(function($) {
+
+		//sortableオプション
+		var option={
+			start : function(){
+			},
+			stop : function(){
+				var data=[];
+				$("li","#myList").each(function(i,v){
+					data.push(v.id);
+				});
+				orderData = document.getElementById('order');
+				orderData.value=data;
+
+			}
+		};
+
+		//sortable実行
+		$("#myList").sortable(option);
+
+	});
+	</script>
+
+</head>
+<body>
+	<h1>アルバムに含まれる画像一覧ページです</h1>
+	<table>
+		<tr>
+			<td>
+				<a href="/admin/album/list">一覧に戻る</a>
+			<td>
+		<tr>
+	</table>
+		<div class="album">
+			<ul id="myList">
+				{% for data in datas %}
+					<li id="{{data.key.id}}">
+						<img src="/admin/picture/img/small?pictureid={{data.key.id}}" />
+					</li>
+				{% endfor %}
+			</ul>
+		</div>
+	<form method="POST" action="orderpictureend">
+		<input type="hidden" name ="order" id="order" value="">
+		<input type="hidden" name ="albumid" id="albumid" value="{{albumid}}">
+		<input type="submit" id="" value="並び替え">
+	</form>
+</body>
+</html>

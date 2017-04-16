@@ -1,0 +1,352 @@
+{% include "../headerlow.html" %}
+<link href='../../../../css/zoombox.css' rel='stylesheet' type='text/css' />
+<script type="text/javascript" src="../../../../js/jquery-ui-1.7.2.custom.min.js"></script>
+<script type="text/javascript" src="../../../../js/zoombox.js"></script>
+<script type="text/javascript">
+    $(function() {
+      {% for data in datas %}
+        $('#{{data.key.id}}').draggable({
+            cursor: 'move',
+            helper: 'clone',
+            opacity: 0.8,
+            revert: true
+        });
+      {% endfor %}
+    });
+    $(function(){
+      {% for data in albumdatas %}
+        $('#{{data.key.id}}').droppable({
+            drop: function(event, ui){
+                var pictureid = ui.draggable.context.id;
+                var albumid   = {{data.key.id}};
+                var data = 'data='+pictureid+":"+albumid
+                url = '/user/album/addalbum';
+                if(pictureid !='' && albumid !=''){
+                    $.post(url, data, function(status){
+                        var bool = status.substring(0,1);
+                        if(bool == '1'){
+
+                            var id = document.getElementById("div_alubm_album");
+
+                            id.style.backgroundColor='#F4FEFF';
+                            setTimeout("changeCss()",1000);
+
+                        }else if(bool == '2'){
+                            alert('一つのアルバムに同じ画像は登録できません。');
+
+                        }else if(bool == '3'){
+                            alert('最大登録数は20枚です');
+
+                        }else if(bool == '4'){
+
+                            alert('登録に失敗しました。やり直して下さい！？');
+                        }
+                    })
+                }
+            }
+        })
+        {% endfor %}
+    });
+
+    function changeCss(){
+        var id = document.getElementById("div_alubm_album");
+        id.style.backgroundColor='#F4FEC5';
+    }
+</script>
+<script type="text/javascript">
+    $(function() {
+      zoombox.init();
+    });
+</script>
+<script type="text/javascript">
+  function sendFlg(){
+    var changeForm = document.getElementById("change");
+    changeForm.action = "/user/album/makeslideshow";
+    changeForm.submit();
+}
+</script>
+</head>
+
+<body id="bodymain">
+
+<div id="container"><!--container-->
+
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<!-- header -->
+<!-- headerdetail -->
+{% include "../headerdetail.html" %}
+<!-- /headerdetail -->
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<!-- main_wrap -->
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<div id="main_wrap" class="clearfix"><!--main-->
+
+<!-- main -->
+<!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<div id="login_main">
+
+<h2 id="h2_title">スライドショー作成</h2>
+
+<!--div id="login_header">
+    <div id="div_new">
+        <ul class="ul_navi">
+            <li><a href="login_top.html">アルバム一覧</a></li>
+            <li><a href="login_alubmcreate.html">新規アルバム登録</a></li>
+            <li><a href="login_slideshowcreate.html">スライドショー作成</a></li>
+        </ul>
+    </div>
+</div-->
+<br class="clearboth" />
+<script type="text/javascript">
+    function getSubmit(form, action){
+        var form = document.getElementById(form);
+        form.action =action;
+        form.location
+
+    }
+</script>
+アルバムに入れたい写真を、左のアルバムアイコンにドラッグします。<br />
+<span class="font_red">※チェックボタンをいれた後サムネイルをクリックすると、拡大画像が表示されます。</span>
+<br /><br />
+<div id="div_alubm_thum">
+<h3>写真一覧</h3>
+<!--p class="a_right"-->
+    <div class="register_ok">
+        <ul>
+        	<form method="GET" action="" id="change" >
+        		<li>
+			    	<input type="checkbox" name="zoomFlg" value ="1" {% ifequal zoomFlg "1" %}checked="checked"{% endifequal %} onClick="javascript:sendFlg();" /><label id="check_pict">&nbsp;画像を拡大</label>&nbsp;&nbsp;
+					<input type="hidden" name="send" value="1" />
+				</li>
+			</form>
+            <form method="GET" action="/user/album/makeslideshow">
+                <li style="width:150px;">
+                    <input type="text" name="picturelabel" size="25" value="{{picturelabel}}" />
+                </li>
+                <li style="width:60px;">
+                    <input type="submit" size="30" value="　検　索　" />
+                </li>
+            </form>
+            <form method="GET" action="/user/album/makeslideshow">
+                <li style="width:80px;">
+                    <input type="submit" size="30" value="ク　リ　ア" />
+                    <input type="hidden" name="clear" value="1" />
+                </li>
+            </form>
+        </ul>
+    </div>
+
+<br class="clearboth" />
+<!--/p-->
+<ul>
+<table>
+    {% for data in datas %}
+        {% if forloop.counter0|divisibleby:"4" %}
+            <tr>
+        {% endif %}
+            <td>
+                {% ifequal zoomFlg "1" %}
+                    <a href="/picture/img/big?pictureid={{data.key.id}}" rel="zoombox[gallery]" >
+                        <img src="/picture/img/small?pictureid={{data.key.id}}" />
+                    </a>
+                {% else %}
+                    <div id="{{data.key.id}}" class="" style="width: 120px; height:120px">
+                        <img src="/admin/picture/img/small?pictureid={{data.key.id}}" />
+                    </div>
+                {% endifequal %}
+            </td>
+        {% if forloop.last %}
+                </tr>
+        {% else %}
+            {% if forloop.counter|divisibleby:"4" %}
+                </tr>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+    {% ifequal picturePagerFlg 1%}
+    <tr>
+        <td colspan="4">
+            <ul class="pager" style="margin-left:70px;">
+                {% ifnotequal picturepage 1 %}
+                <li class="prev">
+                    <a href="/user/album/makeslideshow?picturepage={{ pictureprev }}">&laquo; 前へ</a>
+                </li>
+                {% endifnotequal %}
+                {% for i in picturepages %}
+                    {% ifequal forloop.counter 1 %}
+                        {% ifequal i picturepage %}
+                            <li>
+                                {{ i }}
+                            </li>
+                        {% else %}
+                            <li>
+                                <a href="/user/album/makeslideshow?picturepage={{ i }}">{{ i }}</a>
+                            </li>
+                        {% endifequal %}
+                    {% endifequal %}
+                    {% ifequal forloop.counter 2 %}
+                        {% ifequal i picturepage %}
+                            <li>
+                                {{ i }}
+                            </li>
+                        {% else %}
+                            <li>
+                                <a href="/user/album/makeslideshow?picturepage={{ i }}">{{ i }}</a>
+                            </li>
+                        {% endifequal %}
+                    {% endifequal %}
+                    {% ifequal forloop.counter 3 %}
+                        {% ifequal i picturepage %}
+                            <li>
+                                {{ i }}
+                            </li>
+                        {% else %}
+                            <li>
+                                <a href="/user/album/makeslideshow?picturepage={{ i }}">{{ i }}</a>
+                            </li>
+                        {% endifequal %}
+                    {% endifequal %}
+                    {% ifequal forloop.counter 4 %}
+                        {% ifequal i picturepage %}
+                            <li>
+                                {{ i }}
+                            </li>
+                        {% else %}
+                            <li>
+                                <a href="/user/album/makeslideshow?picturepage={{ i }}">{{ i }}</a>
+                            </li>
+                        {% endifequal %}
+                    {% endifequal %}
+                    {% ifequal forloop.counter 5 %}
+                        {% ifequal i picturepage %}
+                            <li>
+                                {{ i }}
+                            </li>
+                        {% else %}
+                            <li>
+                                <a href="/user/album/makeslideshow?picturepage={{ i }}">{{ i }}</a>
+                            </li>
+                        {% endifequal %}
+                    {% endifequal %}
+                    {% ifequal forloop.counter 6 %}
+                        {% ifequal i picturepage %}
+                            <li>
+                                {{ i }}
+                            </li>
+                        {% else %}
+                            <li>
+                                <a href="/user/album/makeslideshow?picturepage={{ i }}">{{ i }}</a>
+                            </li>
+                        {% endifequal %}
+                    {% endifequal %}
+                {% endfor %}
+                {% ifnotequal picturepage picturelastpage %}
+                    <li class="next">
+                        <a href="/user/album/makeslideshow?picturepage={{ picturenext }}">次へ &raquo;</a>
+                    </li>
+                {% endifnotequal %}
+            </ul>
+        </td>
+    </tr>
+    {% endifequal %}
+</table>
+</ul>
+</div><!--//div_alubm_thum-->
+
+<div id="div_alubm_album">
+<h3>アルバム一覧</h3>
+<form method="GET" action="/user/album/makeslideshow">
+    <p class="a_right" style="margin-bottom:10px;">
+        <input type="text" name="albumtitle" size="15" value="{{albumtitle|escape}}" />
+        <input type="submit" value="　検　索　" />
+    </p>
+</form>
+<!--alubm01-->
+<table>
+{% for data in albumdatas %}
+<tr>
+    <td>
+        <div class="div_slideshowalubm">
+            <div class="alubm_thum">
+                <div id="{{data.key.id}}" class="alubm_thum"><b>{{data.title|escape}}</b></div>
+            </div>
+            <p>
+                <a href="/user/album/orderpicture?albumid={{data.key.id}}">並び替え</a>
+                ｜
+                <a href="/user/album/updateslideshow?albumid={{data.key.id}}">変　更</a>
+            </p>
+        </div>
+    </td>
+</tr>
+{% endfor %}
+{% ifequal albumPagerFlg 1%}
+<tr>
+    <td style="padding-left:30px;">
+        <ul class="pager" >
+            {% ifnotequal albumpage 1 %}
+                <li class="prev">
+                    <a href="/user/album/makeslideshow?albumpage={{ albumprev }}">&laquo;</a>
+                </li>
+            {% endifnotequal %}
+            {% for i in albumpages %}
+                {% ifequal forloop.counter 1 %}
+                    {% ifequal i albumpage %}
+                        <li>
+                            {{ i }}
+                        </li>
+                    {% else %}
+                        <li>
+                            <a href="/user/album/makeslideshow?albumpage={{ i }}">{{ i }}</a>
+                        </li>
+                    {% endifequal %}
+                {% endifequal %}
+                {% ifequal forloop.counter 2 %}
+                    {% ifequal i albumpage %}
+                        <li>
+                            {{ i }}
+                        </li>
+                    {% else %}
+                        <li>
+                            <a href="/user/album/makeslideshow?albumpage={{ i }}">{{ i }}</a>
+                        </li>
+                    {% endifequal %}
+                {% endifequal %}
+                {% ifequal forloop.counter 3 %}
+                    {% ifequal i albumpage %}
+                        <li>
+                            {{ i }}
+                        </li>
+                    {% else %}
+                        <li>
+                            <a href="/user/album/makeslideshow?albumpage={{ i }}">{{ i }}</a>
+                        </li>
+                    {% endifequal %}
+                {% endifequal %}
+            {% endfor %}
+            {% ifnotequal albumpage albumlastpage %}
+                <li class="next">
+                    <a href="/user/album/makeslideshow?albumpage={{ albumnext }}">&raquo;</a>
+                </li>
+            {% endifnotequal %}
+        </ul>
+    </td>
+</tr>
+{% endifequal %}
+</table>
+</div><!--//div_alubm_alubm-->
+<br class="clearboth" />
+</div><!--/main-->
+<!-- navi -->
+{% include "../navi.html" %}
+<!-- /navi -->
+</div><!--/main_wrap-->
+</div><!--/container-->
+
+<!-- footer -->
+{% include "../footer.html" %}
+<!--/footer-->
+<!-- analytics -->
+{% include "../analytics.html" %}
+<!-- /analytics -->
+</body>
+</html>

@@ -1,0 +1,199 @@
+﻿{% include "header.html" %}
+<title>スライドショー</title>
+<link rel="stylesheet" href="../../../../css/common.css" type="text/css" />
+<link rel="stylesheet" href="../../../../css/galleriffic-2.css" type="text/css" />
+<script type="text/javascript" src="http://maps.google.co.jp/maps/api/js?sensor=false"></script>
+<script type="text/javascript" src="../../../../js/jquery.galleriffic.js"></script>
+<script type="text/javascript" src="../../../../js/jquery.opacityrollover.js"></script>
+<!-- We only want the thunbnails to display when javascript is disabled -->
+<script type="text/javascript">
+    document.write('<style>.noscript { display: none; }</style>');
+</script>
+<script type="text/javascript">
+    jQuery(document).ready(function($) {
+        // We only want these styles applied when javascript is enabled
+        $('div.navigation').css({'width' : '300px', 'float' : 'left'});
+        $('div.content').css('display', 'block');
+
+        // Initially set opacity on thumbs and add
+        // additional styling for hover effect on thumbs
+        var onMouseOutOpacity = 0.67;
+        $('#thumbs ul.thumbs li').opacityrollover({
+            mouseOutOpacity:   onMouseOutOpacity,
+            mouseOverOpacity:  1.0,
+            fadeSpeed:         'fast',
+            exemptionSelector: '.selected'
+        });
+
+        // Initialize Advanced Galleriffic Gallery
+        var gallery = $('#thumbs').galleriffic({
+            delay:                     2500,
+            //numThumbs:                 15,
+            numThumbs:                 6,
+            preloadAhead:              10,
+            enableTopPager:            true,
+            enableBottomPager:         true,
+            maxPagesToShow:            7,
+            imageContainerSel:         '#slideshow',
+            controlsContainerSel:      '#controls',
+            captionContainerSel:       '#caption',
+            loadingContainerSel:       '#loading',
+            renderSSControls:          true,
+            renderNavControls:         true,
+            playLinkText:              'スライドショーを見る',
+            pauseLinkText:             '停止',
+            prevLinkText:              '&lsaquo; 前の写真',
+            nextLinkText:              '次の写真 &rsaquo;',
+            nextPageLinkText:          '次へ &rsaquo;',
+            prevPageLinkText:          '&lsaquo; 前へ',
+            enableHistory:             false,
+            autoStart:                 false,
+            syncTransitions:           true,
+            defaultTransitionDuration: 900,
+            onSlideChange:             function(prevIndex, nextIndex) {
+                // 'this' refers to the gallery, which is an extension of $('#thumbs')
+                this.find('ul.thumbs').children()
+                    .eq(prevIndex).fadeTo('fast', onMouseOutOpacity).end()
+                    .eq(nextIndex).fadeTo('fast', 1.0);
+            },
+            onPageTransitionOut:       function(callback) {
+                this.fadeTo('fast', 0.0, callback);
+            },
+            onPageTransitionIn:        function() {
+                this.fadeTo('fast', 1.0);
+            }
+        });
+    });
+</script>
+<script type="text/javascript">
+    var map_canvas;
+    var infoWnd;
+    function initialize(){
+        var initPos = new google.maps.LatLng({{album.point}});
+        {% ifnotequal album.point2 None %}
+            var startPos = new google.maps.LatLng({{album.point2}});
+        {% endifnotequal %}
+
+        var mapTypeOpts = {
+            mapTypeIds : [google.maps.MapTypeId.ROADMAP]
+
+        };
+        var mapOptions = {
+            center: initPos,
+            zoom: 12,
+            scrollwheel: false,
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            mapTypeControlOptions : mapTypeOpts
+        };
+        var mapId = document.getElementById("map_canvas");
+        map_canvas = new google.maps.Map(mapId, mapOptions);
+        var markerOpts = {
+            position: initPos,
+            map: map_canvas,
+            icon: "../../../images/mark.png"
+        };
+        {% ifnotequal album.point2 None %}
+            var markerOpts2 = {
+                position: startPos,
+                map: map_canvas,
+                icon: "../../../images/mark2.png"
+            };
+            var marker2 = new google.maps.Marker(markerOpts2);
+        {% endifnotequal %}
+
+        var marker = new google.maps.Marker(markerOpts);
+
+    }
+        google.maps.event.addDomListener(window, "load", initialize);
+</script>
+<script type="text/javascript">
+    function insertBookmark(){
+        var albumid = {{album.key.id}};
+        var data = 'albumid='+albumid;
+        var url = '/user/album/insertbookmark';
+
+        $.get(url, data, function(status){
+            if(status == "1"){
+                alert("登録に失敗しました");
+            }else{
+                alert("登録しました");
+            }
+        })
+    }
+</script>
+</head>
+    <body id="bodymain">
+        <div id="page">
+            <div id="container">
+                {% include "headerdetail.html" %}
+                <h2 id="h2_title">スライドショー</h2>
+                <!-- Start Advanced Gallery Html Containers -->
+                <div id="gallery" class="content">
+                    <div id="controls" class="controls"></div>
+                    <div class="slideshow-container">
+                        <div id="loading" class="loader"></div>
+                        <div id="slideshow" class="slideshow"></div>
+                    </div>
+                    <div id="caption" class="caption-container"></div>
+                </div>
+                <div id="thumbs" class="navigation">
+                    <ul class="thumbs noscript">
+                        {% for data in datas %}
+                        <li>
+                            <a class="thumb" name="leaf" href="/admin/picture/img/middle?pictureid={{data.key.id}}" title="{{data.name}}">
+                                <img src="/admin/picture/img/small?pictureid={{data.key.id}}" title="{{data.name}}"/>
+                            </a>
+
+                            <div class="caption">
+
+                                <div class="image-title">タイトル　{{data.title}}　：スタート　{{data.start}}<br />{{data.recital}}　</div>
+                                <div class="image-desc">{{data.picture_comment}}　</div>
+                                <div class="a_right" style="margin-right:15px;">
+                                <p style="margin-bottom:5px;">
+                                    <a href="javascript:window.location='http://twitter.com/home?status='+encodeURIComponent(document.title+' » '+location.href);">
+                                        <img src="images/tweet.jpg" />
+                                    </a>
+                                </p>
+                                    <p>
+                                        <!-- bookmarkplus start -->
+                                        <a href="javascript:(function(){var%20d=(new%20Date);var%20s=document.createElement('script');s.charset='UTF-8';s.src='http://b.hatena.ne.jp/js/Hatena/Bookmark/let.js?'+d.getFullYear()+d.getMonth()+d.getDate();(document.getElementsByTagName('head')[0]||document.body).appendChild(s);})();">
+                                        {% ifequal loginFlg 1 %}
+                                            <a href="javascript:void(0)" title="ブックマークに保存します"  onclick="javascript:insertBookmark();">
+                                                <img src="../../../../images/bookmark.jpg" />
+                                            </a>
+                                        {% endifequal %}
+                                        <a href='javascript:location.href="http://b.hatena.ne.jp/add?mode=confirm&amp;url="%2bencodeURIComponent(location.href)%2b"&amp;title="%2bencodeURIComponent(document.title);' style="font-size:12px; text-decoration:none;">
+                                            <img src="http://www.ec-images.com/images/smo/sbm/hatenasbm.gif" border="0" alt="" />
+                                        </a>
+                                        <a href='javascript:location.href="http://www.google.com/bookmarks/mark?op=add&amp;bkmk="%2bencodeURIComponent(location.href)%2b"&amp;title="%2bencodeURIComponent(document.title);' style="font-size:12px; text-decoration:none;">
+                                            <img src="http://www.ec-images.com/images/smo/sbm/googlesbm.png" border="0" alt="" />
+                                        </a>
+                                        <a href='javascript:location.href="http://clip.livedoor.com/redirect?link="%2bencodeURIComponent(location.href)%2b"&amp;title="%2bencodeURIComponent(document.title);' style="font-size:12px; text-decoration:none;">
+                                            <img src="http://www.ec-images.com/images/smo/sbm/livedoorsbm.gif" border="0" alt="" />
+                                        </a>
+                                        <!-- bookmarkplus end -->
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    <div id="googlemap_2">
+                        <div id="map_canvas" style="width: 347px; height: 260px"></div>
+                    </div>
+                </div>
+                <div style="clear: both;"></div>
+                <div id="div_link_box">
+                        <div class="link_box"><a href="/indexsearch">トップに戻る</a></div>
+                    {% ifequal ownFlg "1" %}
+                        <div class="link_box"><a href="/user/album/orderpicture?albumid={{album.key.id}}">並べ替え</a></div>
+                        <div class="link_box"><a href="/user/album/updateslideshow?albumid={{album.key.id}}">変更</a></div>
+                    {% else %}
+                        <!--div class="link_box"><a href="/user/album/orderpicture?albumid={{album.key.id}}">このユーザーのアルバムを見る</a></div-->
+                    {% endifequal %}
+                </div>
+            </div>
+        </div>
+        {% include "footer.html" %}
+    </body>
+</html>
